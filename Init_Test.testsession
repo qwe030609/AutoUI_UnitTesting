@@ -1,0 +1,10 @@
+<SessionState ContinuousTestingMode="0" IsActive="True" Name="Init_Test" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session">
+  <TestAncestor>
+    <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.EmptyTest</TestId>
+    <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.EmptyTest</TestId>
+    <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Report.EmptyTest</TestId>
+    <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Execution.EmptyTest</TestId>
+    <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_GUIEditor.EmptyTest</TestId>
+    <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.EmptyTest</TestId>
+  </TestAncestor>
+</SessionState>

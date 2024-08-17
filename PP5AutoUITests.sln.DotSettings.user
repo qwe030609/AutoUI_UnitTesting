@@ -1,0 +1,97 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="C:\Users\adam.chen\Desktop\UnitTest\packages\MSTest.TestFramework.2.2.10\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll" /&gt;&#xD;
+&lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\adam.chen\AppData\Local\Temp\JetBrains\ReSharperPlatformVs17\vAny_40d4e34b\CoverageData\_PP5AutoUITests.1814985217\Snapshot\snapshot.utdcvr</s:String>
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6440b547_002D0698_002D4aa1_002Dac1e_002D1ff74d080338/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TPEditor_LongTimeTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;And&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_InsertAndDeleteSameTI_ForNTimes&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_CopyAndPasteSameTI_ForNTimes&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_InsertAndDeleteSameVectorVar_ForNTimes&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_CopyAndPasteSameVectorVar_ForNTimes&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_InsertAndDeleteSameCommandForNTimes&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;Not&gt;&#xD;
+      &lt;TestAncestor&gt;&#xD;
+        &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_InsertAndDeleteSameCommandForNTimes&lt;/TestId&gt;&#xD;
+      &lt;/TestAncestor&gt;&#xD;
+    &lt;/Not&gt;&#xD;
+  &lt;/And&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6a3eb7b3_002D0b0c_002D49f1_002Db7e4_002D56fd288422cc/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Management_LongTimeTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;And&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;Not&gt;&#xD;
+      &lt;TestAncestor&gt;&#xD;
+        &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.Management_AddDefectCodeFor1000Times_UntilWarningBoxPopup&lt;/TestId&gt;&#xD;
+        &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.Management_AddRoleFor5000Times_UntilWarningBoxPopup&lt;/TestId&gt;&#xD;
+        &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.Management_AddUserFor5000Times_UntilWarningBoxPopup&lt;/TestId&gt;&#xD;
+        &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.EmptyTest&lt;/TestId&gt;&#xD;
+        &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.Management_AddActivityLogByEditUserAccountActiveState100000Times_CheckLatest100000Data&lt;/TestId&gt;&#xD;
+      &lt;/TestAncestor&gt;&#xD;
+    &lt;/Not&gt;&#xD;
+  &lt;/And&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=888eade3_002D0eb7_002D4796_002Da7cd_002Dc11b3f436607/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Init_Test" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.EmptyTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.EmptyTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Report.EmptyTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Execution.EmptyTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_GUIEditor.EmptyTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.EmptyTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b8ea9945_002Dbe9f_002D4e82_002D9d89_002D303f494ec805/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TIEditor_LongTimeTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;And&gt;&#xD;
+      &lt;Or&gt;&#xD;
+        &lt;And&gt;&#xD;
+          &lt;TestAncestor&gt;&#xD;
+            &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_InsertAndDeleteSameTI_ForNTimes&lt;/TestId&gt;&#xD;
+            &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_CopyAndPasteSameTI_ForNTimes&lt;/TestId&gt;&#xD;
+            &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_InsertAndDeleteSameVectorVar_ForNTimes&lt;/TestId&gt;&#xD;
+            &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_CopyAndPasteSameVectorVar_ForNTimes&lt;/TestId&gt;&#xD;
+            &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_InsertAndDeleteSameCommandForNTimes&lt;/TestId&gt;&#xD;
+          &lt;/TestAncestor&gt;&#xD;
+          &lt;TestAncestor&gt;&#xD;
+            &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_InsertAndDeleteSameCommandForNTimes&lt;/TestId&gt;&#xD;
+          &lt;/TestAncestor&gt;&#xD;
+        &lt;/And&gt;&#xD;
+        &lt;TestAncestor&gt;&#xD;
+          &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_CopyAndPasteSameCommandForNTimes&lt;/TestId&gt;&#xD;
+          &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_InsertAndDeleteSameVariableForNTimes&lt;/TestId&gt;&#xD;
+          &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_CopyAndPasteSameVariableForNTimes&lt;/TestId&gt;&#xD;
+          &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management&lt;/TestId&gt;&#xD;
+        &lt;/TestAncestor&gt;&#xD;
+      &lt;/Or&gt;&#xD;
+      &lt;Not&gt;&#xD;
+        &lt;TestAncestor&gt;&#xD;
+          &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management&lt;/TestId&gt;&#xD;
+        &lt;/TestAncestor&gt;&#xD;
+      &lt;/Not&gt;&#xD;
+    &lt;/And&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_GUIEditor.GUIEditor_AddControlElementGo_For209TimesFillTheScreen&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
+	
+	<s:Boolean x:Key="/Default/IdeIntegrationViewOptions/FilterSnapshotsBySolution/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/Profiling/Configurations/=0/@EntryIndexedValue">&lt;data&gt;&lt;HostParameters type="LocalHostParameters" /&gt;&lt;Argument type="AttachArgument"&gt;&lt;DisplayArguments&gt;"Chroma.PP5IDE.exe"&lt;/DisplayArguments&gt;&lt;DisplayName&gt;Chroma.PP5IDE.exe&lt;/DisplayName&gt;&lt;ProcessId&gt;15420&lt;/ProcessId&gt;&lt;RuntimeVersion&gt;4.0.30319&lt;/RuntimeVersion&gt;&lt;/Argument&gt;&lt;Info type="TimelineInfo"&gt;&lt;LoadPdb&gt;True&lt;/LoadPdb&gt;&lt;/Info&gt;&lt;CoreOptions type="CoreOptions"&gt;&lt;CoreTempPath IsNull="False"&gt;&lt;/CoreTempPath&gt;&lt;RemoteEndPoint IsNull="False"&gt;&lt;/RemoteEndPoint&gt;&lt;AdditionalEnvironmentVariables /&gt;&lt;/CoreOptions&gt;&lt;HostOptions type="HostOptions"&gt;&lt;HostTempPath IsNull="False"&gt;&lt;/HostTempPath&gt;&lt;/HostOptions&gt;&lt;/data&gt;</s:String>
+	<s:String x:Key="/Default/Profiling/Configurations/=1/@EntryIndexedValue">&lt;data&gt;&lt;HostParameters type="LocalHostParameters" /&gt;&lt;Argument type="StandaloneArgument"&gt;&lt;Arguments IsNull="False"&gt;&lt;/Arguments&gt;&lt;ClrEngine&gt;Default&lt;/ClrEngine&gt;&lt;FileName&gt;C:\Program Files (x86)\Chroma\PowerPro5\Bin\Chroma.PP5IDE.exe&lt;/FileName&gt;&lt;UseExternalConsole&gt;True&lt;/UseExternalConsole&gt;&lt;WorkingDirectory&gt;C:\Program Files (x86)\Chroma\PowerPro5\Bin&lt;/WorkingDirectory&gt;&lt;Scope&gt;&lt;ProcessFilters /&gt;&lt;/Scope&gt;&lt;/Argument&gt;&lt;Info type="TimelineInfo"&gt;&lt;LoadPdb&gt;True&lt;/LoadPdb&gt;&lt;/Info&gt;&lt;CoreOptions type="CoreOptions"&gt;&lt;CoreTempPath IsNull="False"&gt;&lt;/CoreTempPath&gt;&lt;RemoteEndPoint IsNull="False"&gt;&lt;/RemoteEndPoint&gt;&lt;AdditionalEnvironmentVariables /&gt;&lt;/CoreOptions&gt;&lt;HostOptions type="HostOptions"&gt;&lt;HostTempPath IsNull="False"&gt;&lt;/HostTempPath&gt;&lt;/HostOptions&gt;&lt;/data&gt;</s:String>
+	<s:String x:Key="/Default/Profiling/Configurations/=2/@EntryIndexedValue">&lt;data&gt;&lt;HostParameters type="LocalHostParameters" /&gt;&lt;Argument type="StandaloneArgument"&gt;&lt;Arguments IsNull="False"&gt;&lt;/Arguments&gt;&lt;FileName IsNull="False"&gt;&lt;/FileName&gt;&lt;WorkingDirectory IsNull="False"&gt;&lt;/WorkingDirectory&gt;&lt;Scope&gt;&lt;ProcessFilters /&gt;&lt;/Scope&gt;&lt;/Argument&gt;&lt;Info type="TimelineInfo"&gt;&lt;LoadPdb&gt;True&lt;/LoadPdb&gt;&lt;/Info&gt;&lt;CoreOptions type="CoreOptions"&gt;&lt;CoreTempPath IsNull="False"&gt;&lt;/CoreTempPath&gt;&lt;RemoteEndPoint IsNull="False"&gt;&lt;/RemoteEndPoint&gt;&lt;AdditionalEnvironmentVariables&gt;&lt;Item&gt;&lt;Key&gt;DOTNET_ENVIRONMENT&lt;/Key&gt;&lt;Value&gt;Development&lt;/Value&gt;&lt;/Item&gt;&lt;Item&gt;&lt;Key&gt;RESHARPER_TESTRUNNER&lt;/Key&gt;&lt;Value&gt;Profile&lt;/Value&gt;&lt;/Item&gt;&lt;Item&gt;&lt;Key&gt;RESHARPER_HOST_VERSION&lt;/Key&gt;&lt;Value&gt;241.0.20240607.153524&lt;/Value&gt;&lt;/Item&gt;&lt;Item&gt;&lt;Key&gt;RESHARPER_HOST&lt;/Key&gt;&lt;Value&gt;ReSharperPlatformVs17&lt;/Value&gt;&lt;/Item&gt;&lt;/AdditionalEnvironmentVariables&gt;&lt;/CoreOptions&gt;&lt;HostOptions type="HostOptions"&gt;&lt;HostTempPath IsNull="False"&gt;&lt;/HostTempPath&gt;&lt;ReprofileDisableReason&gt;LaunchedByReSharperUnitTestRunner&lt;/ReprofileDisableReason&gt;&lt;/HostOptions&gt;&lt;/data&gt;</s:String>
+	
+	
+	<s:Boolean x:Key="/Default/RunConfigs/Config/=BAECAF61D5FD0B489342A45D744784F2/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/RunConfigs/Config/=BAECAF61D5FD0B489342A45D744784F2/DefaultAction/@EntryValue">ProfilePerformance</s:String>
+	
+	<s:String x:Key="/Default/RunConfigs/Config/=BAECAF61D5FD0B489342A45D744784F2/Exe/Executable/@EntryValue">C:\Program Files (x86)\Chroma\PowerPro5\Bin\Chroma.PP5IDE.exe</s:String>
+	<s:String x:Key="/Default/RunConfigs/Config/=BAECAF61D5FD0B489342A45D744784F2/Exe/WorkingDirectory/@EntryValue">C:\Program Files (x86)\Chroma\PowerPro5\Bin</s:String>
+	<s:String x:Key="/Default/RunConfigs/Config/=BAECAF61D5FD0B489342A45D744784F2/Name/@EntryValue">PP5 IDE</s:String>
+	<s:String x:Key="/Default/RunConfigs/Config/=BAECAF61D5FD0B489342A45D744784F2/Type/@EntryValue">exe</s:String></wpf:ResourceDictionary>

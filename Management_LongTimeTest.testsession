@@ -1,0 +1,16 @@
+<SessionState ContinuousTestingMode="0" IsActive="True" Name="Management_LongTimeTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session">
+  <And>
+    <TestAncestor>
+      <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management</TestId>
+    </TestAncestor>
+    <Not>
+      <TestAncestor>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.Management_AddDefectCodeFor1000Times_UntilWarningBoxPopup</TestId>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.Management_AddRoleFor5000Times_UntilWarningBoxPopup</TestId>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.Management_AddUserFor5000Times_UntilWarningBoxPopup</TestId>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.EmptyTest</TestId>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_Management.Management_AddActivityLogByEditUserAccountActiveState100000Times_CheckLatest100000Data</TestId>
+      </TestAncestor>
+    </Not>
+  </And>
+</SessionState>

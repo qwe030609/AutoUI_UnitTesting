@@ -1,0 +1,21 @@
+<SessionState ContinuousTestingMode="0" IsActive="True" Name="TIEditor_LongTimeTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session">
+  <Or>
+    <And>
+      <TestAncestor>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_InsertAndDeleteSameTI_ForNTimes</TestId>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_CopyAndPasteSameTI_ForNTimes</TestId>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_InsertAndDeleteSameVectorVar_ForNTimes</TestId>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TPEditor.TPEditor_CopyAndPasteSameVectorVar_ForNTimes</TestId>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_InsertAndDeleteSameCommandForNTimes</TestId>
+      </TestAncestor>
+      <TestAncestor>
+        <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_InsertAndDeleteSameCommandForNTimes</TestId>
+      </TestAncestor>
+    </And>
+    <TestAncestor>
+      <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_CopyAndPasteSameCommandForNTimes</TestId>
+      <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_InsertAndDeleteSameVariableForNTimes</TestId>
+      <TestId>MSTest::8656D85B-9367-4427-81BE-B82DDD7BAE03::.NETFramework,Version=v4.5::PP5AutoUITests.TestCases_TIEditor.MainPanel_TIEditor_CopyAndPasteSameVariableForNTimes</TestId>
+    </TestAncestor>
+  </Or>
+</SessionState>
