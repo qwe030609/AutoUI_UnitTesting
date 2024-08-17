@@ -1,2 +1,2 @@
-# WPFAutoUITesting
-This is the auto UI unit testing project on WPF application.
+# AutoUI_UnitTesting
+This is the auto UI unit testing project on a WPF application.
