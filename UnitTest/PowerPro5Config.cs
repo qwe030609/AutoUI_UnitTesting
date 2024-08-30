@@ -11,9 +11,12 @@ namespace PP5AutoUITests
 {
     internal class PowerPro5Config
     {
+        internal const string SubPathPattern = "{0}/{1}";
+        internal const string SubsubPathPattern = "{0}/{1}/{2}";
         internal const string ReleaseFolder = "C:/Program Files (x86)/Chroma/PowerPro5";
         internal const string ReleaseTIUserPreTestFolder = "C:/Program Files (x86)/Chroma/PowerPro5/TestItem/UserDefined/TI/PreTest";
         internal const string ReleaseDataFolder = "C:/Program Files (x86)/Chroma/PowerPro5/Data";
+        internal const string SystemCommandFileName = "SystemCommand.csx";
         internal const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723/";
         //internal const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723/wd/hub";
         //internal const string WindowsApplicationDriverUrl = "http://127.0.0.1:4444/wd/hub";

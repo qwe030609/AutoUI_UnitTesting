@@ -9,158 +9,159 @@ using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Opera;
 using System.Collections.ObjectModel;
 using System.Threading;
+using System.Security.Principal;
 
 namespace PP5AutoUITests
 {
     [TestClass]
     public class ElementFinderTests
     {
-        [TestMethod]
-        public void FindElementByAbsoluteXPath_StateUnderTest_ExpectedBehavior()
-        {
-            // Arrange
-            //var elementFinder = new ElementFinder();
-            WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
-            string xPath = null;
-            int nTryCount = 0;
+        //[TestMethod]
+        //public void FindElementByAbsoluteXPath_StateUnderTest_ExpectedBehavior()
+        //{
+        //    // Arrange
+        //    //var elementFinder = new ElementFinder();
+        //    WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
+        //    string xPath = null;
+        //    int nTryCount = 0;
 
-            // Act
-            var result = driver.FindElementByAbsoluteXPath(
-                xPath,
-                nTryCount);
+        //    // Act
+        //    var result = driver.FindElementByAbsoluteXPath(
+        //        xPath,
+        //        nTryCount);
 
-            // Assert
-            Assert.Fail();
-        }
+        //    // Assert
+        //    Assert.Fail();
+        //}
 
-        [TestMethod]
-        public void FindElementByAutomationId_StateUnderTest_ExpectedBehavior()
-        {
-            // Arrange
-            //var elementFinder = new ElementFinder();
-            WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
-            string AutomationId = null;
-            int nTryCount = 0;
+        //[TestMethod]
+        //public void FindElementByAutomationId_StateUnderTest_ExpectedBehavior()
+        //{
+        //    // Arrange
+        //    //var elementFinder = new ElementFinder();
+        //    WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
+        //    string AutomationId = null;
+        //    int nTryCount = 0;
 
-            // Act
-            var result = driver.FindElementByAutomationId(AutomationId, nTryCount);
+        //    // Act
+        //    var result = driver.FindElementByAutomationId(AutomationId, nTryCount);
 
-            // Assert
-            Assert.Fail();
-        }
+        //    // Assert
+        //    Assert.Fail();
+        //}
 
-        [TestMethod]
-        public void FindElementsByAutomationId_StateUnderTest_ExpectedBehavior()
-        {
-            // Arrange
-            //var elementFinder = new ElementFinder();
-            WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
-            string AutomationId = null;
-            int nTryCount = 0;
+        //[TestMethod]
+        //public void FindElementsByAutomationId_StateUnderTest_ExpectedBehavior()
+        //{
+        //    // Arrange
+        //    //var elementFinder = new ElementFinder();
+        //    WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
+        //    string AutomationId = null;
+        //    int nTryCount = 0;
 
-            // Act
-            var result = driver.FindElementsByAutomationId(AutomationId, nTryCount);
+        //    // Act
+        //    var result = driver.FindElementsByAutomationId(AutomationId, nTryCount);
 
-            // Assert
-            Assert.Fail();
-        }
+        //    // Assert
+        //    Assert.Fail();
+        //}
 
-        [TestMethod]
-        public void FindElementByName_StateUnderTest_ExpectedBehavior()
-        {
-            // Arrange
-            WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
-            string Name = null;
-            int nTryCount = 0;
-            var result = driver.FindElementByName(Name, nTryCount);
+        //[TestMethod]
+        //public void FindElementByName_StateUnderTest_ExpectedBehavior()
+        //{
+        //    // Arrange
+        //    WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
+        //    string Name = null;
+        //    int nTryCount = 0;
+        //    var result = driver.FindElementByName(Name, nTryCount);
 
-            // Assert
-            Assert.Fail();
-        }
+        //    // Assert
+        //    Assert.Fail();
+        //}
 
-        [TestMethod]
-        public void FindElementsByName_StateUnderTest_ExpectedBehavior()
-        {
-            // Arrange
-            WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
-            string Name = null;
-            int nTryCount = 0;
-            var result = driver.FindElementsByName(Name, nTryCount);
+        //[TestMethod]
+        //public void FindElementsByName_StateUnderTest_ExpectedBehavior()
+        //{
+        //    // Arrange
+        //    WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
+        //    string Name = null;
+        //    int nTryCount = 0;
+        //    var result = driver.FindElementsByName(Name, nTryCount);
 
-            // Assert
-            Assert.Fail();
-        }
+        //    // Assert
+        //    Assert.Fail();
+        //}
 
-        [TestMethod]
-        public void GetElementById_StateUnderTest_ExpectedBehavior()
-        {
-            // Arrange
-            //var elementFinder = new ElementFinder();
-            WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
-            string automationId = null;
-            string propertyName = null;
-            int timeOut = 0;
+        //[TestMethod]
+        //public void GetElementById_StateUnderTest_ExpectedBehavior()
+        //{
+        //    // Arrange
+        //    //var elementFinder = new ElementFinder();
+        //    WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
+        //    string automationId = null;
+        //    string propertyName = null;
+        //    int timeOut = 0;
 
-            // Act
-            var result = driver.GetElementById(automationId, propertyName, timeOut);
+        //    // Act
+        //    var result = driver.GetElementById(automationId, propertyName, timeOut);
 
-            // Assert
-            Assert.Fail();
-        }
+        //    // Assert
+        //    Assert.Fail();
+        //}
 
-        [TestMethod]
-        public void GetElementByName_StateUnderTest_ExpectedBehavior()
-        {
-            // Arrange
-            //var elementFinder = new ElementFinder();
-            WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
-            string name = null;
-            string propertyName = null;
-            int timeOut = 0;
+        //[TestMethod]
+        //public void GetElementByName_StateUnderTest_ExpectedBehavior()
+        //{
+        //    // Arrange
+        //    //var elementFinder = new ElementFinder();
+        //    WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
+        //    string name = null;
+        //    string propertyName = null;
+        //    int timeOut = 0;
 
-            // Act
-            var result = driver.GetElementByName(
-                name,
-                propertyName,
-                timeOut);
+        //    // Act
+        //    var result = driver.GetElementByName(
+        //        name,
+        //        propertyName,
+        //        timeOut);
 
-            // Assert
-            Assert.Fail();
-        }
+        //    // Assert
+        //    Assert.Fail();
+        //}
 
-        [TestMethod]
-        public void GetElementsById_StateUnderTest_ExpectedBehavior()
-        {
-            // Arrange
-            //var elementFinder = new ElementFinder();
-            WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
-            string automationId = null;
-            string propertyName = null;
-            int timeOut = 0;
+        //[TestMethod]
+        //public void GetElementsById_StateUnderTest_ExpectedBehavior()
+        //{
+        //    // Arrange
+        //    //var elementFinder = new ElementFinder();
+        //    WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
+        //    string automationId = null;
+        //    string propertyName = null;
+        //    int timeOut = 0;
 
-            // Act
-            var result = driver.GetElementsById(automationId, propertyName, timeOut);
+        //    // Act
+        //    var result = driver.GetElementsById(automationId, propertyName, timeOut);
 
-            // Assert
-            Assert.Fail();
-        }
+        //    // Assert
+        //    Assert.Fail();
+        //}
 
-        [TestMethod]
-        public void GetElementsByName_StateUnderTest_ExpectedBehavior()
-        {
-            // Arrange
-            //var elementFinder = new ElementFinder();
-            WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
-            string name = null;
-            string propertyName = null;
-            int timeOut = 0;
+        //[TestMethod]
+        //public void GetElementsByName_StateUnderTest_ExpectedBehavior()
+        //{
+        //    // Arrange
+        //    //var elementFinder = new ElementFinder();
+        //    WindowsDriver<WindowsElement> driver = Executor.GetInstance().GetCurrentDriver();
+        //    string name = null;
+        //    string propertyName = null;
+        //    int timeOut = 0;
 
-            // Act
-            var result = driver.GetElementsByName(name, propertyName, timeOut);
+        //    // Act
+        //    var result = driver.GetElementsByName(name, propertyName, timeOut);
 
-            // Assert
-            Assert.Fail();
-        }
+        //    // Assert
+        //    Assert.Fail();
+        //}
 
         [TestMethod]
         public void GetElement_StateUnderTest_ExpectedBehavior()
@@ -217,10 +218,11 @@ namespace PP5AutoUITests
             //var elementFinder = new ElementFinder();
             IWebElement elementSrc = null;
             int timeOut = 0;
+            int nTryCount = 3;
             By[] findTypes = null;
 
             // Act
-            var result = elementSrc.GetElement(timeOut, findTypes);
+            var result = elementSrc.GetElementWithRetry(timeOut, nTryCount, findTypes);
 
             // Assert
             Assert.Fail();

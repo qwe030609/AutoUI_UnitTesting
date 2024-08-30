@@ -9,6 +9,7 @@ using System.Threading;
 using Chroma.UnitTest.Common;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Windows;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
 namespace PP5AutoUITests
 {
@@ -39,7 +40,7 @@ namespace PP5AutoUITests
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
+                Logger.LogMessage(e.StackTrace);
             }
         }
         //[TestMethod]
@@ -65,7 +66,7 @@ namespace PP5AutoUITests
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
+                Logger.LogMessage(e.StackTrace);
             }
         }
 
@@ -89,11 +90,11 @@ namespace PP5AutoUITests
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
+                Logger.LogMessage(e.StackTrace);
             }
         }
 
-        public static Screenshot GetElementImageFromScreenshot(IWebElement element)
+        public static Screenshot GetElementImageFromScreenshot(this IWebElement element)
         {
             //// Find the element
             //IWebElement ele = Executor.GetInstance().GetCurrentDriver().FindElement(By.Id("hplogo"));
@@ -148,7 +149,7 @@ namespace PP5AutoUITests
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                Logger.LogMessage($"An error occurred: {ex.Message}");
                 return null;
             }
         }

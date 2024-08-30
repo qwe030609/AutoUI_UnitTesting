@@ -17,6 +17,12 @@ using System.Reflection.Emit;
 using System.Collections;
 using System.Windows.Input;
 using Castle.Core.Internal;
+using System.Collections.Concurrent;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
+using System.Diagnostics.Contracts;
+using System.Collections.Specialized;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Serialization;
 
 namespace PP5AutoUITests
 {
@@ -99,7 +105,7 @@ namespace PP5AutoUITests
                     nodeFound = nodeFound.SelectToken(nodesNames[i]);
                     if (nodeFound == null)
                     {
-                        Console.WriteLine($"Node {nodesNames[i]} not found.");
+                        Logger.LogMessage($"Node {nodesNames[i]} not found.");
                         return false;
                     }
 
@@ -115,15 +121,42 @@ namespace PP5AutoUITests
                     nodeCount = array1.Count;
                 }
 
-                Console.WriteLine($"NodeArray count is: '{nodeCount}'.");
+                Logger.LogMessage($"NodeArray count is: '{nodeCount}'.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting NodeArray count: {ex.Message}");
+                Logger.LogMessage($"Error getting NodeArray count: {ex.Message}");
             }
             return true;
         }
 
+        /// <summary>
+        /// Creates a new node in a JSON file based on the specified node path.
+        /// </summary>
+        /// <param name="filePath">The full path of the JSON file.</param>
+        /// <param name="nodePath">The path to create the new node, following the format: {nodePart}@{propertyPart}</param>
+        /// <returns>True if the new node is successfully created; otherwise, false.</returns>
+        /// <remarks>
+        /// Node Path Format: {nodePart}@{propertyPart}
+        /// 
+        /// nodePart: nodeName1[index1]/nodeName2[index2]/.../nodeName_n[{srcIndex}>{destIndex}]
+        /// - Represents the hierarchical structure of nodes
+        /// - Last node format: [srcIndex>destIndex] or [>destIndex]
+        ///   - [>destIndex]: Creates a clean node (clears inner properties)
+        ///   - [srcIndex>destIndex]: Clones the source node to create a new node
+        /// 
+        /// propertyPart: PropertyName1=Value1,PropertyName2=Value2,...
+        /// - Defines properties to be set on the new node
+        /// 
+        /// Examples:
+        /// 1. Create a clean node at the end:
+        ///    CommandGroupInfos[0]/Commands[>-1]@CommandName=cmdName,GroupID=300,IsDevice=true
+        /// 
+        /// 2. Clone and create a node at the end:
+        ///    CommandGroupInfos[0]/Commands[0>-1]@CommandName=newCmd,GroupID=301,IsDevice=false
+        /// 
+        /// For more details on usage and edge cases, refer to the method implementation.
+        /// </remarks>
         public static bool JsonCreateNewNodeInList(string filePath, string nodePath)
         {
             bool propertyUpdated = false;
@@ -136,14 +169,29 @@ namespace PP5AutoUITests
                 // Parse the nodePath to extract node indices and the property update information
                 var atSplit = nodePath.Split('@');
                 var nodes = atSplit[0].Split('/');
-                var propertyAssignment = atSplit[1].Split('='); // propertyName=newValue
-                string propertyName = propertyAssignment[0];
-                var newValue = JToken.FromObject(propertyAssignment[1]);
+                var propertyAssignmentList = atSplit[1].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries); // atSplit[1]: propertyName1=newValue1,propertyName2=newValue2,propertyName3=newValue3
+                List<string> propertyNames = new List<string>();
+                List<JToken> newValues = new List<JToken>();
+                foreach (var propertyAssignment in propertyAssignmentList)
+                {
+                    var propertyNameAndValue = propertyAssignment.Trim().Split('=');
+                    propertyNames.Add(propertyNameAndValue[0].Trim());
+                    newValues.Add(JToken.FromObject(ParseStringToObjectOfType(propertyNameAndValue[1].Trim())));
+                    //TypeHelper.IsLong(propertyNameAndValue[1].Trim().GetType());
+                    //var roc = new System.Collections.ObjectModel.ReadOnlyCollection<string>(new []{""});
+                    //bool isROC = TypeHelper.IsReadOnlyCollection(roc.GetType());
+
+                    //Assert.IsTrue(isROC);
+                    //typeof(System.Collections.Generic.IReadOnlyCollection)
+                }
 
                 JToken nodeFound = config;
                 JToken parent = null;
                 List<string> nodesNames = new List<string>();
-                List<int?> indices = new List<int?>();
+                List<string> indices = new List<string>();
+                int? destNodeToCreateIdx = null, sourceNodeToCopyIdx = null;
+                bool isCreateCleanNode = false;
+                //string pnTmp = "pnTmp";
 
                 // Decode node path and indices
                 foreach (var node in nodes)
@@ -152,7 +200,20 @@ namespace PP5AutoUITests
                     {
                         var parts = node.TrimEnd(']').Split('[');
                         nodesNames.Add(parts[0]);
-                        indices.Add(int.Parse(parts[1]));
+
+                        // Adam, 20240829, Add source > destination node index parsing: [src>dst]
+                        //if (parts[1].Contains('>'))
+                        //{
+                        //    var partIndeces = parts[1].Split(new char[] { '>' }, StringSplitOptions.RemoveEmptyEntries);
+                        //    var sourceIdx = partIndeces[0];
+                        //    var destIdx = partIndeces[1];
+                        //    indices.Add(string.Concat(sourceIdx, ',' , destIdx));
+                        //}
+                        //else
+                        //{
+                        //    indices.Add(parts[1]);
+                        //}
+                        indices.Add(parts[1]);
                     }
                     else
                     {
@@ -167,56 +228,124 @@ namespace PP5AutoUITests
                     nodeFound = nodeFound.SelectToken(nodesNames[i]);
                     if (nodeFound == null)
                     {
-                        Console.WriteLine($"Node {nodesNames[i]} not found.");
+                        Logger.LogMessage($"Node {nodesNames[i]} not found.");
                         return propertyUpdated;
                     }
 
-                    if (indices[i].HasValue && nodeFound is JArray array)
+
+                    // Adam, 20240829, Add source > destination node index parsing: [src>dst]
+                    if (indices[i].Contains('>'))
                     {
-                        // Access specific indexed node if index exists
-                        nodeFound = array[indices[i].Value];
+                        var parts = indices[i].Split('>');
+                        isCreateCleanNode = parts[0].ToNullableInt() == null;
+                        sourceNodeToCopyIdx = isCreateCleanNode ? parts[0].ToNullableInt() != -1 ?
+                                              0 : parts[0].ToNullableInt() : nodeFound.Count() - 1;
+                        destNodeToCreateIdx = parts[1].ToNullableInt() != -1 ? parts[1].ToNullableInt() : nodeFound.Count();
+                        indices[i] = sourceNodeToCopyIdx.ToString();
                     }
+                    else
+                        if (indices[i].ToNullableInt() == -1)
+                        indices[i] = (nodeFound.Count() - 1).ToString();
+
+                    int? idx = indices[i].ToNullableInt();
+                    if (idx.HasValue)
+                    {
+                        if (nodeFound is JArray array)
+                        {
+                            // Access specific indexed node if index exists
+                            nodeFound = array.IsNullOrEmpty() ? array : array[idx.Value];
+                        }
+                    }
+
+                    //if (idx.HasValue && nodeFound is JArray array)
+                    //{
+                    //    else
+                    //    {
+                    //        if (idx == -1)
+                    //            indices[i] = (nodeFound.Count() - 1).ToString();
+                    //    }
+
+                    //    // Access specific indexed node if index exists
+                    //    nodeFound = array[indices[i].Value];
+                    //}
                 }
-                parent = nodeFound.Parent; // Store parent reference
+                if (nodeFound is JArray && !nodeFound.HasValues)
+                {
+                    parent = nodeFound;
+                    nodeFound = new JObject();
+                }
+                else
+                    parent = nodeFound.Parent; // Store parent reference
 
                 // Copy and update the node
                 if (nodeFound is JObject obj)
                 {
+                    // Only copy from the node: [src>dst]
                     var newNode = (JObject)obj.DeepClone();
-                    newNode[propertyName] = newValue;
+
+                    // Adam, 20240829, for clean node creation:
+                    // Create clean node: [>dst]
+                    if (newNode.HasValues && isCreateCleanNode)
+                    {
+                        foreach (var child in newNode.Properties())
+                        {
+                            //if ((child.Value as JValue))
+                            if (child.Value is JArray array)
+                            {
+                                array.RemoveAll();
+                            }
+                            else if (child.Value is JValue)
+                            {
+                                var property = child;
+                                if (property.Name.Contains('$')) { }    // $type : "Chroma.Common.Command, Common", retain original value
+                                else
+                                {
+                                    if (property.Value.Type is JTokenType.String 
+                                        || property.Value.Type is JTokenType.Integer 
+                                        || property.Value.Type is JTokenType.Float)
+                                        property.Value = null;
+                                    else if (property.Value.Type is JTokenType.Boolean)
+                                        property.Value = false;
+                                }
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < propertyNames.Count; i++)
+                        newNode[propertyNames[i]] = newValues[i];
 
                     if (parent is JArray parentArray)
                     {
                         // Add the new node to the end of the parent array
-                        parentArray.Add(newNode);
+                        parentArray.Insert((int)destNodeToCreateIdx, newNode);
                         propertyUpdated = true;
                     }
                     else
                     {
-                        Console.WriteLine("Parent node is not an array.");
+                        Logger.LogMessage("Parent node is not an array.");
                         return propertyUpdated;
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Target node is not an object.");
+                    Logger.LogMessage("Target node is not an object.");
                     return propertyUpdated;
                 }
 
                 if (!propertyUpdated)
                 {
-                    Console.WriteLine($"Property with name '{propertyName}' not updated.");
+                    Logger.LogMessage($"Property with name '{propertyNames.ListToString()}' not updated.");
                 }
                 else
                 {
                     // Save the updated JSON configuration back to the file
                     File.WriteAllText(filePath, config.ToString(Formatting.None));
-                    Console.WriteLine($"Node copied, property '{propertyName}' updated, and new node added successfully.");
+                    Logger.LogMessage($"Node copied, property '{propertyNames.ListToString()}' updated, and new node added successfully.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error updating property: {ex.Message}");
+                Logger.LogMessage($"Error updating property: {ex.Message}");
             }
             return propertyUpdated;
         }
@@ -233,7 +362,7 @@ namespace PP5AutoUITests
                 // Find the specific property by name and update its ItemValue
                 var nodes = nodePath.Split('/');
                 JToken nodeFound = config.DeepClone();
-               
+
                 foreach (var node in nodes)
                 {
                     nodeFound = nodeFound.SelectToken(node);
@@ -254,16 +383,16 @@ namespace PP5AutoUITests
 
                 if (!propertyUpdated)
                 {
-                    Console.WriteLine($"Property with name '{propertyName}' not found.");
+                    Logger.LogMessage($"Property with name '{propertyName}' not found.");
                 }
 
                 // Save the updated JSON configuration back to the file
                 File.WriteAllText(filePath, config.ToString(Formatting.None));
-                Console.WriteLine($"Property '{propertyName}' updated successfully.");
+                Logger.LogMessage($"Property '{propertyName}' updated successfully.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error updating property: {ex.Message}");
+                Logger.LogMessage($"Error updating property: {ex.Message}");
             }
             return propertyUpdated;
         }
@@ -314,7 +443,7 @@ namespace PP5AutoUITests
 
                     if (nodeFound == null)
                     {
-                        Console.WriteLine($"Node {nodes[i]} not found.");
+                        Logger.LogMessage($"Node {nodes[i]} not found.");
                         return propertyFound;
                     }
                 }
@@ -341,12 +470,12 @@ namespace PP5AutoUITests
 
                 if (!propertyValues.Any())
                 {
-                    Console.WriteLine($"Property with name '{propertyName}' not found.");
+                    Logger.LogMessage($"Property with name '{propertyName}' not found.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting property: {ex.Message}");
+                Logger.LogMessage($"Error getting property: {ex.Message}");
             }
             return propertyFound;
         }
@@ -420,7 +549,7 @@ namespace PP5AutoUITests
                         nodeFound = nodeFound[nodesWithIndces[i].Item2];
                     if (nodeFound == null)
                     {
-                        Console.WriteLine($"Node not found.");
+                        Logger.LogMessage($"Node not found.");
                         return propertyFound;
                     }
                 }
@@ -432,13 +561,142 @@ namespace PP5AutoUITests
                     propertyFound = true;
                 }
                 else
-                    Console.WriteLine($"Property with name '{propertyName}' not found.");
+                    Logger.LogMessage($"Property with name '{propertyName}' not found.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting property: {ex.Message}");
+                Logger.LogMessage($"Error getting property: {ex.Message}");
             }
             return propertyFound;
+        }
+
+        public static bool JsonDeleteNode(string filePath, string nodePath /*node1[0]/node2[0]*/)
+        {
+            bool nodeDeleted = false;
+            try
+            {
+                // Load the JSON configuration from the file
+                var json = File.ReadAllText(filePath);
+                var config = JObject.Parse(json);
+
+                // Parse the nodePath to extract node indices
+                var nodes = nodePath.Split('/');
+                JToken nodeFound = config;
+                List<string> nodesNames = new List<string>();
+                List<int?> indices = new List<int?>();
+
+                // Decode node path and indices
+                foreach (var node in nodes)
+                {
+                    if (node.Contains('['))
+                    {
+                        var parts = node.TrimEnd(']').Split('[');
+                        nodesNames.Add(parts[0]);
+                        indices.Add(int.Parse(parts[1]));
+                    }
+                    else
+                    {
+                        nodesNames.Add(node);
+                        indices.Add(null);
+                    }
+                }
+
+                // Navigate to the specified node
+                for (int i = 0; i < nodesNames.Count; i++)
+                {
+                    nodeFound = nodeFound.SelectToken(nodesNames[i]);
+                    if (nodeFound == null)
+                    {
+                        Logger.LogMessage($"Node {nodesNames[i]} not found.");
+                        return nodeDeleted;
+                    }
+
+                    if (indices[i].HasValue && nodeFound is JArray array)
+                    {
+                        if (indices[i] == -1)
+                            indices[i] = nodeFound.Count() - 1;
+
+                        // Access specific indexed node if index exists
+                        nodeFound = array[indices[i].Value];
+                    }
+                    else
+                        return nodeDeleted;
+                }
+
+                //// Find the final node to delete
+                //var nodeToDelete = nodeFound.SelectToken(nodesNames.Last());
+                //if (nodeToDelete == null)
+                //{
+                //    Console.WriteLine($"Node {nodesNames.Last()} not found.");
+                //    return nodeDeleted;
+                //}
+
+                // Get the name of the final node to delete
+                string finalNodeName = nodesNames.Last();
+                int? finalNodeIndex = indices.Last();
+
+                // Delete the node
+                if (finalNodeIndex.HasValue)
+                {
+                    if (nodeFound.Parent is JArray parentArray)
+                    {
+                        // Remove the specific element from the array
+                        parentArray.RemoveAt(finalNodeIndex.Value);
+                        nodeDeleted = true;
+                    }
+                    else if (nodeFound.Parent is JObject parentObject)
+                    {
+                        // Remove the property from the object
+                        parentObject.Remove(finalNodeName);
+                        nodeDeleted = true;
+                    }
+
+                }
+
+                if (nodeDeleted)
+                {
+                    // Save the updated JSON configuration back to the file
+                    File.WriteAllText(filePath, config.ToString(Formatting.None));
+                    Logger.LogMessage("Node deleted successfully.");
+                }
+                else
+                {
+                    Logger.LogMessage("Node could not be deleted.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogMessage($"Error deleting node: {ex.Message}");
+            }
+            return nodeDeleted;
+        }
+
+        public static OrderedDictionary<TKey, TValue> CreateOrderedDictionary<TKey, TValue>(List<TKey> keys, List<TValue> values)
+        {
+            if (keys.Count != values.Count)
+                throw new ArgumentException("Keys and values lists do not have the same length.");
+            OrderedDictionary<TKey, TValue> result = new OrderedDictionary<TKey, TValue>(keys.Count);
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                result.Insert(i, keys[i], values[i]);  // Add each key-value pair to the dictionary
+            }
+
+            return result;
+        }
+
+        public static ConcurrentDictionary<TKey, TValue> CreateConcurrentDictionary<TKey, TValue>(List<TKey> keys, List<TValue> values)
+        {
+            if (keys.Count != values.Count)
+                throw new ArgumentException("Keys and values lists do not have the same length.");
+            ConcurrentDictionary<TKey, TValue> result = new ConcurrentDictionary<TKey, TValue>();
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                result[keys[i]] = values[i];  // Add each key-value pair to the dictionary
+            }
+
+            return result;
         }
 
         public static Dictionary<TKey, TValue> CreateDictionary<TKey, TValue>(List<TKey> keys, List<TValue> values)
@@ -453,6 +711,33 @@ namespace PP5AutoUITests
             }
 
             return result;
+        }
+
+        public static object ParseStringToObjectOfType(this string str)
+        {
+            // if str is null, return null
+            if (str.IsNull()) return null;
+
+            // Try to parse as an integer (Long integer) > since JToken.Integer is type of long
+            if (long.TryParse(str, out long intValue))
+            {
+                return intValue;
+            }
+
+            // Try to parse as a float (double precision) > since JToken.Float is type of double
+            if (double.TryParse(str, out double floatValue))
+            {
+                return floatValue;
+            }
+
+            // Try to parse as a boolean
+            if (bool.TryParse(str, out bool boolValue))
+            {
+                return boolValue;
+            }
+
+            // If it can't be parsed to int, float, or bool, return as string
+            return str;
         }
     }
 }

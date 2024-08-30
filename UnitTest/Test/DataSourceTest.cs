@@ -4,10 +4,10 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PP5AutoUITests
+namespace PP5AutoUITests.Test
 {
     [TestClass]
-    public class UnitTest_TestReport
+    public class DataSourceTest
     {
         #region Test Report Tests
 
@@ -22,11 +22,23 @@ namespace PP5AutoUITests
         //    _testContext.Properties["DataDirectory"] = Path.Combine(Directory.GetCurrentDirectory(), "TestCases");
         //}
 
-        [TestInitialize]
-        public void TestReport_TestMethodSetup()
-        {
+        //[AssemblyInitialize]
+        //public static void BeforeClass(TestContext tc)
+        //{
 
-        }
+        //}
+
+        //[TestInitialize]
+        //public void TestMethodSetup()
+        //{
+
+        //}
+
+        //[AssemblyCleanup]
+        //public static void AfterClass()
+        //{
+
+        //}
 
         /// <summary>
         /// Test reading datasource as csv file, csv path: C:\\Temp\\TestCaseData.csv

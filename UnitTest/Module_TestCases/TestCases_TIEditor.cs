@@ -50,6 +50,9 @@ namespace PP5AutoUITests
                 _scrnShotTimer = new CaptureAppScreenshotTimer(CaptureApplicationScreenshot, "dotMemory.UI.64", saveFolder, updateInterval); // 60000 milliseconds = 1 minute
                 _scrnShotTimer.Start();
             }
+
+            // Wait for the command group info is loaded
+            WaitUntil(() => CheckAllTasksCompleted());
         }
 
         [TestCleanup]
@@ -6167,14 +6170,15 @@ namespace PP5AutoUITests
 
         [TestMethod("B2-1")]
         [TestCategory("測試命令列表(B2)")]
-        [DataRow("B2-1")]
-        public void TIEditor_AddCommandInCmdGrpList_CheckCommandIsAdded(string TIName)
+        //[DataRow("B2-1")]
+        public void TIEditor_AddCommandInCmdGrpList_CheckCommandIsAdded()
         {
             // Arrange
-            string cmdName = "AAA_B2-1";
+            string cmdName = "AAA_B2-1";            // prefix name: AAA to let command show up on the first in the group list
             string groupName = "Arithmetic";
+            bool isCmdUpdatedExpected = true;
             bool isCmdUpdated = AddCommandInCGIList(groupName, cmdName);
-            true.ShouldEqualTo(isCmdUpdated);
+            isCmdUpdatedExpected.ShouldEqualTo(isCmdUpdated);
 
             // Action
             // Close TI window and re-open it (reload the cgi list)
@@ -6186,81 +6190,205 @@ namespace PP5AutoUITests
             PerformOpenNewTI();
 
             // Assert
-            bool commandIsAddedExpected = true;
-            bool commandIsAdded = GetCommandTreeByGroupName(groupName).SelectTreeViewItem(groupName, cmdName);
-            commandIsAddedExpected.ShouldEqualTo(commandIsAdded);
+            IWebElement commandAddedExpected = null;                                                        // Check the command is inserted in the command group in TI Editor
+            IWebElement commandAdded = GetCommandBy(groupName, cmdName);
+            commandAddedExpected.ShouldNotEqualTo(commandAdded);
+
+            // Delete the added command
+            int CGIListIdx = GetGroupNames().IndexOf(groupName);
+            FileProcessingExtension.JsonDeleteNode(filePath: GetCommandFileFullPath(),
+                                                   nodePath: $"CommandGroupInfos[{CGIListIdx}]/Commands[-1]");
         }
 
         [TestMethod("B2-2")]
         [TestCategory("測試命令列表(B2)")]
-        [DataRow("B2-2")]
+        [DataRow(Colors.NavyBlue, Colors.DarkMagenta2)]
+        //[DataRow(Colors.White, Colors.Green)]
         //B2-2
-        public void TIEditor_ChangeBgFgColorOfTestCommand_VerifyTestCommandColorSame()
+        public void TIEditor_ChangeBgFgColorOfTestCommand_VerifyTestCommandColorSame(Colors colorFont, Colors colorBackground)
         {
-            //// Management, change the bg & fg color of test command
-            /////            // Click on System Setup button
-            //CurrentDriver.GetElement(By.ClassName("ToolBar"))
-            //             .GetElements(By.ClassName("RadioButton"))[2].LeftClick();
-
-            //// Click on Color tab
-            //IWebElement systemSetupTabItem = CurrentDriver.GetElement(MobileBy.AccessibilityId("mainTab"))
-            //                                              .GetElements(By.ClassName("TabItem"))[2];
-
-            //IWebElement colorTabItem = systemSetupTabItem.GetElement(By.ClassName("TabControl"))
-            //                                             .GetElements(By.ClassName("TabItem"))[3];
-
             //colorTabItem.LeftClick();
             MenuSelect("Functions", "Management");                                                          // Open management
             WaitUntil(() => PP5IDEWindow.Text == PowerPro5Config.IDE_ManagementWindowName, 10000);
             PP5IDEWindow.ToolBarSelect(2/*System Setup*/);
             IWebElement colorTabPage = PP5IDEWindow.GetTabControlElement("mainTab")
-                                                   .TabSelect(2/*System Setup*/, "Color");                    // Tabselect "System Setup, Color"
+                                                   .TabSelect(2/*System Setup*/, "Color");                  // Tabselect "System Setup, Color"
 
-            // Select the first command of group: "AC Source"
-            SelectColorSettingItem(colorTabPage, ColorSettingPageType.TestCommand, "AC Source", 1);
-
-            // Repeat setting the test command's color by alternate between \"#FFFF00FF\" and default color
-            var FontColorEditBtn = colorTabPage.GetElements(By.Name("Font Color Edit")).Last();
-            FontColorEditBtn.LeftClick();
-            PP5IDEWindow.GetElement(MobileBy.AccessibilityId("DefaultPicker"))
-                          .SelectComboBoxItemByName("#FFFF00FF", supportKeyInputSearch: false);
-
-            FontColorEditBtn.LeftClick();
-            PP5IDEWindow.GetElement(MobileBy.AccessibilityId("DefaultColor"))
-                          .GetFirstListBoxItemElement()
-                          .LeftClick();
-
-
-            Screenshot scTestCmdInMgntBeforeSet = colorTabPage.GetColorSettingItem(ColorSettingPageType.TestCommand, "AC Source", 1)
+            #region Set font color and bg color
+            //string colorCodeFont = "#Navy";                                                             
+            //string colorCodeBg = "#FF00FF00";
+            SelectColorSettingItem(colorTabPage, ColorSettingPageType.TestCommand, "AC Source", 1);         // Select the first command of group: "AC Source"
+            SetColor(colorTabPage, ColorSettingType.Font, colorFont);
+            SetColor(colorTabPage, ColorSettingType.Background, colorBackground);
+                                                                                // Get screenshot of the test command (yellow grid) before changing the color
+            Screenshot scTestCmdInMgntBeforeSet = GetColorSettingItem(colorTabPage, ColorSettingPageType.TestCommand, "AC Source", 1)
                                                               .GetFirstTextElement()
                                                               .GetElementImageFromScreenshot();
             
             PP5IDEWindow.GetElement(By.Name("OK")).LeftClick();                 // click OK to confirm the setting
 
-                                                                                
-            Func<bool> getTcTextEleMgFunc = (() => colorTabPage.GetColorSettingItem(ColorSettingPageType.TestCommand, "AC Source", 1)
-                                                               .GetFirstTextElement()
-                                                               .GetElementImageFromScreenshot()
-                                                               .Compare(scTestCmdInMgntBeforeSet));
+                                                                                // If the color is set, testcommand color will change
+            Func<bool> getTcTextEleMgFunc = (() => !GetColorSettingItem(colorTabPage, ColorSettingPageType.TestCommand, "AC Source", 1)
+                                                                .GetFirstTextElement()
+                                                                .GetElementImageFromScreenshot()
+                                                                .Compare(scTestCmdInMgntBeforeSet));
         
-            WaitUntil(getTcTextEleMgFunc);                                      // Wait until command color is set                   
-
+            WaitUntil(getTcTextEleMgFunc);                                      // Wait until command color is changed                   
+            
                                                                                 // Gets the screenshot of test command element in Management window
-            Screenshot scTestCmdInMgnt = colorTabPage.GetColorSettingItem(ColorSettingPageType.TestCommand, "AC Source", 1)
+            Screenshot scTestCmdInMgnt = GetColorSettingItem(colorTabPage, ColorSettingPageType.TestCommand, "AC Source", 1)
                                                      .GetFirstTextElement()
                                                      .GetElementImageFromScreenshot();
+            #endregion
 
-            // Back to TI window
+            MenuSelect("Windows", "TI Editor");                                                             // Back to TI window
+
+                                                                                                            
+            IWebElement textTestCmdInTI = GetCommandBy("AC Source",                                        // Get test command textblock (with color)
+                                                        "ReadAC_Current", 
+                                                        collapseTreeView: false).GetFirstTextElement();
+                                                                                                            
+            Screenshot scTestCmdInTI = textTestCmdInTI.GetElementImageFromScreenshot();                     // Gets the screenshot of test command element in TestItem window
+
+            scTestCmdInMgntBeforeSet.SaveAsFile(Path.Combine(Environment.CurrentDirectory, "scTestCmdInMgntBeforeSet.png"));
+            scTestCmdInMgnt.SaveAsFile(Path.Combine(Environment.CurrentDirectory, "scTestCmdInMgnt.png"));
+            scTestCmdInTI.SaveAsFile(Path.Combine(Environment.CurrentDirectory, "scTestCmdInTI.png"));
+            //Console.WriteLine($"scTestCmdInMgnt.AsBase64EncodedString:{scTestCmdInMgnt.AsBase64EncodedString}");
+            //Console.WriteLine($"scTestCmdInTI.AsBase64EncodedString:{scTestCmdInTI.AsBase64EncodedString}");
+
+            scTestCmdInMgnt.AsBase64EncodedString.ShouldEqualTo(scTestCmdInTI.AsBase64EncodedString);       // Compare the color of the element screenshot by Base64-encoded string property
+
+            #region Restore the color to default
+            MenuSelect("Windows", "Management");
+
+            SelectColorSettingItem(colorTabPage, ColorSettingPageType.TestCommand, "AC Source", 1);         // Select the first command of group: "AC Source"
+            SetColor(colorTabPage, ColorSettingType.Font, "default");                                       // set Font color to "default"
+            SetColor(colorTabPage, ColorSettingType.Background, "default");                                 // set Background color to "default"
+
+            PP5IDEWindow.GetElement(By.Name("OK")).LeftClick();                                             // click OK to confirm the setting
+            
+            var testresults = TestResultCollection.Results;
+            #endregion
+        }
+
+        [TestMethod("B2-3")]
+        [TestCategory("測試命令列表(B2)")]
+        //[DataRow("B2-3")]
+        public void TIEditor_AddDeviceRelatedCommandInCmdGrpList_CheckIsDeviceCommandIsAdded()
+        {
+            // Arrange
+            string cmdName = "AAA_B2-3";        // prefix name: AAA to let command show up on the first in the group list
+            string groupName = "AC Source";
+            bool isCmdUpdatedExpected = true;
+            bool isCmdUpdated = AddCommandInCGIList(groupName, cmdName);
+            isCmdUpdatedExpected.ShouldEqualTo(isCmdUpdated);
+
+            // Action
+            // Close TI window and re-open it (reload the cgi list)
+            PP5IDEWindow.GetElement(timeOut: 5000, By.Name(PowerPro5Config.IDE_TIEditorWindowName),         // Close the TI
+                                                   MobileBy.AccessibilityId("CloseButton")).LeftClick();
+
+            MenuSelect("Functions", "TI Editor");
+            WaitUntil(() => GetPP5Window() != null);
+            PerformOpenNewTI();
+
+            // Assert
+            IWebElement commandAddedExpected = null;                                                        // Check the command is inserted in the command group in TI Editor
+            WaitUntil(() => CheckAllTasksCompleted());
+            IWebElement commandAdded = GetCommandBy(groupName, cmdName);
+            commandAddedExpected.ShouldNotEqualTo(commandAdded);
+
+            // Delete the added command
+            int CGIListIdx = GetGroupNames().IndexOf(groupName);
+            FileProcessingExtension.JsonDeleteNode(filePath: GetCommandFileFullPath(),
+                                                   nodePath: $"CommandGroupInfos[{CGIListIdx}]/Commands[-1]");
+        }
+
+        [TestMethod("B2-4")]
+        [TestCategory("測試命令列表(B2)")]
+        //[DataRow("B2-4")]
+        public void TIEditor_AddDeviceUnrelatedCommandInCmdGrpList_CheckSystemCommandIsAdded()
+        {
+            // Arrange
+            string cmdName = "AAA_B2-4";                // prefix name: AAA to let command show up on the first in the group list
+            string groupName = "System, Flow Control";
+            bool isCmdUpdatedExpected = true;
+            bool isCmdUpdated = AddCommandInCGIList(groupName, cmdName);
+            isCmdUpdatedExpected.ShouldEqualTo(isCmdUpdated);
+
+            // Action
+            // Close TI window and re-open it (reload the cgi list)
+            PP5IDEWindow.GetElement(timeOut: 5000, By.Name(PowerPro5Config.IDE_TIEditorWindowName),         // Close the TI
+                                                   MobileBy.AccessibilityId("CloseButton")).LeftClick();
+
+            MenuSelect("Functions", "TI Editor");                                                           // Open New TI window
+            WaitUntil(() => GetPP5Window() != null);
+            PerformOpenNewTI();
+
+            // Assert
+            IWebElement commandAddedExpected = null;                                                        // Check the command is inserted in the command group in TI Editor
+            WaitUntil(() => CheckAllTasksCompleted());
+            IWebElement commandAdded = GetCommandBy(groupName, cmdName);
+            commandAddedExpected.ShouldNotEqualTo(commandAdded);
+
+            // Delete the added command
+            int CGIListIdx = GetGroupNames().IndexOf(groupName);
+            FileProcessingExtension.JsonDeleteNode(filePath: GetCommandFileFullPath(),
+                                                   nodePath: $"CommandGroupInfos[{CGIListIdx}]/Commands[-1]");
+        }
+
+        [TestMethod("B2-5_Python")]
+        [TestCategory("測試命令列表(B2)")]
+        //[DataRow("B2-5_Python")]
+        public void TIEditor_ModifyPythonCommandNameInManagement_CheckPythonCommandIsUpdated()
+        {
+            // Arrange
+            //// Step 1. Create a new python command with name: "AAA_B2-5_Python"
+            string cmdName = "AAA_B2-5_Python";                // prefix name: AAA to let command show up on the first in the group list
+            string cmdNameChanged = "AAA_B2-5_Python1";
+            string groupName = "Python";
+            string cmdTable = DataTableAutoIDType.PGGrid.ToString();
+            bool isCmdUpdatedExpected = true;
+            bool isCmdUpdated = AddEmptyCommandInCGIList(groupName, cmdName);
+            isCmdUpdatedExpected.ShouldEqualTo(isCmdUpdated);
+
+            // Action
+            //// Step 2. In management, change the command name to "AAA_B2-5_Python1"
+            MenuSelect("Functions", "Management");                                                          // Open management
+            WaitUntil(() => PP5IDEWindow.Text == PowerPro5Config.IDE_ManagementWindowName, SharedSetting.LONG_TIMEOUT);
+            PP5IDEWindow.ToolBarSelect(4/*Ex-Function*/);
+            IWebElement PythonTabPage = PP5IDEWindow.GetTabControlElement("mainTab")
+                                                    .TabSelect(4/*Ex-Function*/, "Python");                 // Tabselect "Ex-Function, DLL"
+            PythonTabPage.GetDataGridElement("PythonDataGrid")                                              // Select the row whose Test command alias is "AAA_B2-5_Python"
+                         .GetRowByName(3, cmdName)
+                         .LeftClick();
+            PythonTabPage.GetElement(By.Name("Edit")).LeftClick();                                          // Click on "Edit" button
+
+            AutoUIExecutor.SwitchTo(SessionType.Desktop).GetElement(By.Name("Edit Python"))                 // Alias (command)欄位修改command name: "AAA_B2-5_Python" > "AAA_B2-5_Python1"
+                                                        .GetDataGridElement("TopDataGrid")
+                                                        .GetCellBy(1, 3)
+                                                        .SendContent(cmdNameChanged);
+
+            AutoUIExecutor.SwitchTo(SessionType.Desktop).GetElement(By.Name("Edit Python"))                 // 按OK
+                                                        .GetBtnElement("OK")
+                                                        .LeftClick();
+
+            PP5IDEWindowRefresh();
+
+            WaitUntil(() => cmdNameChanged == PythonTabPage.GetCellValue("PythonDataGrid", 2/*Alias(Command)*/)); // 檢查欄位是否已更新到datatable
+
+            //// Step 3. Switch back to TI Editor, check command name is updated to "AAA_B2-5_Python1"
             MenuSelect("Windows", "TI Editor");
 
-            IWebElement cmdTree = GetCommandTreeByGroupName("AC Source");
-            cmdTree.SelectTreeViewItem("AC Source", "ReadAC_Current");
+            // Assert
+            IWebElement commandAddedExpected = null;
+            IWebElement commandAdded = GetCommandBy(groupName, cmdName);
+            commandAddedExpected.ShouldNotEqualTo(commandAdded);
 
-            //// Gets the screenshot of test command element in TestItem window
-            //Screenshot scTestCmdInTI = cmdTree.GetElement(By.Name()).GetElementImageFromScreenshot();
-
-            //// Compare the color of the element screenshot results
-            //true.ShouldEqualTo(scTestCmdInMgnt.Compare(scTestCmdInTI));
+            // Delete the added command
+            int CGIListIdx = GetGroupNames().IndexOf(groupName);
+            FileProcessingExtension.JsonDeleteNode(filePath: GetCommandFileFullPath(),
+                                                   nodePath: $"CommandGroupInfos[{CGIListIdx}]/Commands[-1]");
         }
 
         [TestMethod]
@@ -6860,7 +6988,7 @@ namespace PP5AutoUITests
 
             // Check command names are same
             //Assert.AreEqual(CommandName, GetCommandBy(CommandName).GetSubElementText());
-            string searchedCommand = GetCommandBy(CommandName, GroupNameToSearch: "", findExactSameCommand: false).GetFirstTextContent();
+            string searchedCommand = GetCommandIsSelected(CommandName, GroupNameToSearch: "", findExactSameCommand: false).GetFirstTextContent();
             //Assert.IsTrue(searchedCommand.ToUpper().Contains(CommandName));
 
             string errorMsg = $"The searchedCommand: {searchedCommand} didn't contains Command name {CommandName}.";
@@ -6940,7 +7068,7 @@ namespace PP5AutoUITests
 
             // Check command names are same
             //Assert.AreEqual(CommandName, GetCommandBy(CommandName).GetSubElementText());
-            string searchedCommand = GetCommandBy(CommandName, GroupNameToSearch: "", findExactSameCommand: false).GetFirstTextContent();
+            string searchedCommand = GetCommandIsSelected(CommandName, GroupNameToSearch: "", findExactSameCommand: false).GetFirstTextContent();
             //Assert.IsTrue(searchedCommand.ToUpper().Contains(CommandName));
 
             string errorMsg = $"The searchedCommand: {searchedCommand} didn't contains Command name {CommandName}.";
@@ -16078,10 +16206,10 @@ namespace PP5AutoUITests
 
             // Input Command name: "StopEVGate_DBCData"
             string CommandName = "StopEVGate_DBCData";
-            //string GroupName = "EV Gate";
+            string GroupName = "EV Gate";
 
             // Add command: "StopEVGate_DBCData" for 3 times
-            var cmdEle = GetCommandBy(CommandName);
+            var cmdEle = GetCommandBy(GroupName, CommandName);
             for (int i = 0; i < 3; i++)
                 cmdEle.DoubleClick();
             //AddCommandBy(GroupName, CommandName, addCount: 3);
@@ -17051,10 +17179,10 @@ namespace PP5AutoUITests
 
             // Input Command name: "StopEVGate_DBCData"
             string CommandName = "StopEVGate_DBCData";
-            //string GroupName = "EV Gate";
+            string GroupName = "EV Gate";
 
             // Add command: "StopEVGate_DBCData" for 3 times
-            var cmdEle = GetCommandBy(CommandName);
+            var cmdEle = GetCommandBy(GroupName, CommandName);
             for (int i = 0; i < 3; i++)
                 cmdEle.DoubleClick();
             //AddCommandBy(GroupName, CommandName, addCount: 3);

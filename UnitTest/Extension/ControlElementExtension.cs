@@ -98,7 +98,7 @@ namespace PP5AutoUITests
             //else
             //    return null;
             
-            comboBox.LeftClick();
+            //comboBox.LeftClick();
             //cmbItems = CurrentDriver.GetElement(By.ClassName("Popup"))
             //                        .GetElements(By.ClassName("ListBoxItem"));
             cmbItems = comboBox.GetElements(By.ClassName("ListBoxItem"));
@@ -106,7 +106,7 @@ namespace PP5AutoUITests
 
         public static int GetComboBoxItemCount(this IWebElement comboBox)
         {
-            comboBox.LeftClick();
+            //comboBox.LeftClick();
             //cmbItems = CurrentDriver.GetElement(By.ClassName("Popup"))
             //                        .GetElements(By.ClassName("ListBoxItem"));
             return comboBox.GetElements(By.ClassName("ListBoxItem")).Count;
@@ -127,13 +127,37 @@ namespace PP5AutoUITests
             }
         }
 
+        public static void SelectComboBoxItemByName2(this IWebElement comboBox, string name)
+        {
+            comboBox.DoubleClickWithDelay(10);
+            comboBox.SendSingleKeys(name);
+            //if (comboBox.GetAttribute("IsExpandCollapsePatternAvailable") == bool.FalseString)      // ListBox
+            //{
+            //    // Case 1: IsKeyboardFocusable=false, IsValuePatternAvailable=false
+            //    if (comboBox.GetAttribute("IsKeyboardFocusable") == bool.FalseString)
+            //}
+            //else                                                                                    // ComboBox
+            //{
+            //    // Case 2: IsKeyboardFocusable=true, IsValuePatternAvailable=true
+            //    // Case 3: IsKeyboardFocusable=true, IsValuePatternAvailable=true
+            //}
+
+            //if (supportKeyInputSearch)
+            //{
+            //    comboBox.SendSingleKeys(name);
+            //}
+            //else
+            //{
+            //    cmbItem.LeftClick();
+            //}
+        }
+
         public static void SelectComboBoxItemByIndex(this IWebElement comboBox, int index, bool supportKeyInputSearch = true)
         {
             comboBox.GetComboBoxItems(out ReadOnlyCollection<IWebElement> cmbItems);
             if (cmbItems.Count() >= index + 1)
             {
                 string name = cmbItems[index].Text;
-
                 if (supportKeyInputSearch)
                 {
                     SendComboKeys(name, Keys.Enter);
@@ -145,10 +169,21 @@ namespace PP5AutoUITests
             }
         }
 
-        public static bool CheckComboBoxHasItemByName(IWebElement comboBox, string name, out IWebElement cmbItem)
+        public static void SelectComboBoxItemByIndex2(this IWebElement comboBox, int index)
         {
             comboBox.GetComboBoxItems(out ReadOnlyCollection<IWebElement> cmbItems);
-            cmbItem = cmbItems.FirstOrDefault(item => item.GetFirstTextContent() == name);
+            if (cmbItems.Count() >= index + 1)
+            {
+                comboBox.SelectComboBoxItemByName2(cmbItems[index].Text);
+            }
+        }
+
+        public static bool CheckComboBoxHasItemByName(IWebElement comboBox, string name, out IWebElement cmbItem)
+        {
+            //comboBox.GetComboBoxItems(out ReadOnlyCollection<IWebElement> cmbItems);
+            //cmbItem = cmbItems.FirstOrDefault(item => item.GetFirstTextContent() == name);
+            // 20240820, Adam, directly get the ListBoxItem by name for improving speed
+            cmbItem = comboBox.GetListBoxItemElement(name);
             return cmbItem != null;
         }
 
@@ -176,81 +211,6 @@ namespace PP5AutoUITests
 
         #region TreeView
 
-        public static IWebElement GetColorSettingItem(this IWebElement ColorSettingPage, ColorSettingPageType csPageType, string groupName, int idx = 1)
-        {
-            IWebElement commandTree;
-            //if (csPageType == ColorSettingPageType.TestCommand)
-            //{
-            //    commandTree = ColorSettingPage.GetElement(MobileBy.AccessibilityId(csPageType.GetDescription()));
-            //}
-            //else
-            //{
-            //    commandTree = ColorSettingPage.GetElement(MobileBy.AccessibilityId(csPageType.GetDescription()));
-            //}
-
-            commandTree = ColorSettingPage.GetElement(MobileBy.AccessibilityId(csPageType.GetDescription()));
-            Console.WriteLine($"LeftClick on Text \"{groupName}\"");
-
-            bool cmdListIsFocused = false;
-            IWebElement groupTreeItem = null;
-            while (groupTreeItem == null)
-            {
-                // Get the element that matching the given groupname directly by XPath (Faster)
-                groupTreeItem = commandTree.GetElement(By.XPath($".//TreeItem[@ClassName='TreeViewItem']/Text[@Name='{groupName}']/parent::node()"), 3000);
-
-                if (groupTreeItem == null && !cmdListIsFocused)
-                {
-                    commandTree.LeftClick();
-                    cmdListIsFocused = true; // Set the flag to true after the left click on the command list
-                }
-
-                // If element if out of screen, press page down to find the element
-                if (groupTreeItem == null)
-                {
-                    Press(Keys.PageDown);
-                    Thread.Sleep(1);
-
-                    // If scroll to end of the command list, group item still not found, throw exception
-                    foreach (var cmdList in commandTree.GetElements(By.ClassName("TreeView")))
-                    {
-                        if (cmdList.GetAttribute("Scroll.VerticallyScrollable") == bool.FalseString)
-                            continue;
-
-                        if (cmdList.GetAttribute("Scroll.VerticalScrollPercent") == "100")
-                            throw new GroupNameNotExistedException(groupName);
-                    }
-                }
-            }
-
-            // Use attribute: "ExpandCollapse.ExpandCollapseState" to check the expand/collapse state, where: Expanded (1), Collapsed (0)
-            if (groupTreeItem.isElementCollapsed())
-                groupTreeItem.GetFirstTextElement().DoubleClick();
-
-            var cmdTreeItems = groupTreeItem.GetElements(By.XPath($".//TreeItem[@ClassName='TreeViewItem']"));
-
-            if (cmdTreeItems.Count == 0)
-                return null;
-            if (idx > cmdTreeItems.Count || idx < -1 || idx == 0)
-                throw new ArgumentOutOfRangeException(idx.ToString());
-
-            IWebElement itemToSetColor = idx == -1 ? cmdTreeItems.Last() : cmdTreeItems[idx];
-
-            //var cmdTreeItem = groupTreeItem.GetElement(By.XPath($"(.//TreeItem[@ClassName='TreeViewItem'])[{cmdNumber + 1}]"));
-            //Console.WriteLine($"LeftClick on Text \"{itemToSetColor.GetFirstTextContent()}\"");
-
-            //// If element if out of screen, move to the element first
-            while (bool.Parse(itemToSetColor.GetAttribute("IsOffscreen")))
-            {
-                Press(Keys.PageDown);
-                Thread.Sleep(50);
-            }
-
-            //// Click on the item
-            //itemToSetColor.LeftClick();
-
-            return itemToSetColor;
-        }
-
         public static bool ExpandTreeView(this IWebElement treeviewElement)
         {
             // Use attribute: "ExpandCollapse.ExpandCollapseState" to check the expand/collapse state, where: Expanded (1), Collapsed (0)
@@ -258,7 +218,7 @@ namespace PP5AutoUITests
             if (treeviewElement.isElementAtLeafNode())
                 return false;
             else if (treeviewElement.isElementCollapsed())
-                treeviewElement.DoubleClick();
+                treeviewElement.GetFirstTextElement().DoubleClick();
 
             return WaitUntil(() => treeviewElement.isElementExpanded());
         }

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading;
 using Chroma.UnitTest.Common;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Windows;
 using OpenQA.Selenium.Interactions;
@@ -295,7 +296,7 @@ namespace PP5AutoUITests
                                             : onElement.GetAttribute("AutomationId")
                                             : onElement.GetAttribute("ClassName");
 
-            Console.WriteLine($"LeftClick on {onElement.TagName} \"{showName}\"");
+            Logger.LogMessage($"LeftClick on {onElement.TagName} \"{showName}\"");
             new Actions(Executor.GetInstance().GetCurrentDriver()).Click(onElement).Perform();
         }
         public static void LeftClickWithDelay(this IWebElement onElement, int delayMilliSecond)
@@ -312,7 +313,20 @@ namespace PP5AutoUITests
 
         public static void DoubleClick(this IWebElement onElement)
         {
+            string showName = !onElement.Text.IsEmpty() ? !onElement.GetAttribute("AutomationId").IsEmpty()
+                                ? onElement.Text
+                                : onElement.GetAttribute("AutomationId")
+                                : onElement.GetAttribute("ClassName");
+
+            Logger.LogMessage($"LeftDoubleClick on {onElement.TagName} \"{showName}\"");
             new Actions(Executor.GetInstance().GetCurrentDriver()).DoubleClick(onElement).Perform();
+        }
+
+        public static void DoubleClickWithDelay(this IWebElement onElement, int delayMilliSecond)
+        {
+            onElement.LeftClick();
+            Thread.Sleep(delayMilliSecond);
+            onElement.LeftClick();
         }
 
         public static void ClickAndHold(this IWebElement onElement)
@@ -347,7 +361,7 @@ namespace PP5AutoUITests
             foreach (string keysToSend in multikeysToSend)
             {
                 actions.SendKeys(element, keysToSend);
-                Console.WriteLine($"KeyboardInput \"{keysToSend}\" in {element.TagName} \"{element.GetAttribute("AutomationId")}\"");
+                Logger.LogMessage($"KeyboardInput \"{keysToSend}\" in {element.TagName} \"{element.GetAttribute("AutomationId")}\"");
             }
             
             actions.Perform();
@@ -359,7 +373,7 @@ namespace PP5AutoUITests
             if (!keysToSend.IsNullOrEmpty())
             {
                 new Actions(Executor.GetInstance().GetCurrentDriver()).SendKeys(element, keysToSend).Perform();
-                Console.WriteLine($"KeyboardInput \"{keysToSend}\" in {element.TagName} \"{element.GetAttribute("AutomationId")}\"");
+                Logger.LogMessage($"KeyboardInput \"{keysToSend}\" in {element.TagName} \"{element.GetAttribute("AutomationId")}\"");
             }
             else
                 return;

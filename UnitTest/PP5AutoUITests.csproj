@@ -89,9 +89,6 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.8.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
-    </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -117,6 +114,12 @@
   <ItemGroup>
     <Compile Include="Assertor.cs" />
     <Compile Include="Base\TestBase.cs" />
+    <Compile Include="Enum\ColorPicker.cs" />
+    <Compile Include="Helper\ByAutomationIdOrName.cs" />
+    <Compile Include="Interface\IModules.cs" />
+    <Compile Include="Interface\ITestItem.cs" />
+    <Compile Include="Interface\ITestCommand.cs" />
+    <Compile Include="Test\TestBaseTests.cs" />
     <Compile Include="Converter\KeyConverter.cs" />
     <Compile Include="ElementFinder.cs" />
     <Compile Include="ElementFinderTests.cs" />
@@ -137,10 +140,11 @@
     <Compile Include="Enum\VariableType.cs" />
     <Compile Include="Enum\WindowType.cs" />
     <Compile Include="Exception\CommandNameNotExistedException.cs" />
-    <Compile Include="Exception\CommandNumberNotExistedException.cs" />
+    <Compile Include="Exception\CommandNumberOutOfRangeException.cs" />
     <Compile Include="Exception\GroupNameNotExistedException.cs" />
     <Compile Include="Executor.cs" />
     <Compile Include="Helper\AutoUIActionHelper.cs" />
+    <Compile Include="Model\CommandGroupData.cs" />
     <Compile Include="PowerPro5Config.cs" />
     <Compile Include="Extension\AutoUIExtension.cs" />
     <Compile Include="Extension\ControlElementExtension.cs" />
@@ -160,16 +164,18 @@
     <Compile Include="Module_TestCases\TestCases_TIEditor.cs" />
     <Compile Include="Module_TestCases\TestCases_TIEditor_EnumCreatorDialog.cs" />
     <Compile Include="Module_TestCases\TestCases_TPEditor.cs" />
+    <Compile Include="PowerPro5ConfigTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Factory\DriverFactory.cs" />
     <Compile Include="Session\MainPanelSession.cs" />
     <Compile Include="Session\PP5IDESession.cs" />
     <Compile Include="SharedSetting.cs" />
-    <Compile Include="UnitTest\UnitTest_HelperFunctionality.cs" />
-    <Compile Include="UnitTest\UnitTest_Report.cs" />
-    <Compile Include="UnitTest\UnitTest_TestReport.cs" />
-    <Compile Include="UnitTest\UnitTest_TIEditor.cs" />
+    <Compile Include="Test\HelperFunctionalityTest.cs" />
+    <Compile Include="Test\ReportModuleTest.cs" />
+    <Compile Include="Test\DataSourceTest.cs" />
+    <Compile Include="Test\TIEditorModuleTest.cs" />
     <Compile Include="Using.cs" />
+    <Compile Include="Utility\OrderedDictionary.cs" />
     <Compile Include="Utility\TextFileWrapper.cs" />
     <Compile Include="Utility\Timer.cs" />
   </ItemGroup>

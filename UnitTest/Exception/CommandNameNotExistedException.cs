@@ -8,13 +8,27 @@ namespace PP5AutoUITests
 {
     public class CommandNameNotExistedException : Exception
     {
-        public CommandNameNotExistedException(string msg) : base(msg)
-        {
+        // Custom property to hold the command name
+        public string CommandName { get; }
 
+        // Constructor that accepts the command name as a parameter
+        public CommandNameNotExistedException(string commandName)
+            : base($"The command \"{commandName}\" does not exist.")
+        {
+            CommandName = commandName;
         }
 
-        //public CommandNumberNotExistedException(string msg, Exception innerException) : base(msg, innerException) { }
+        // Optional: You can add additional constructors to handle inner exceptions or custom messages
+        public CommandNameNotExistedException(string commandName, string message)
+            : base(message)
+        {
+            CommandName = commandName;
+        }
 
-        // You can add additional properties or methods as needed
+        public CommandNameNotExistedException(string commandName, string message, Exception innerException)
+            : base(message, innerException)
+        {
+            CommandName = commandName;
+        }
     }
 }

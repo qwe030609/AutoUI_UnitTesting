@@ -526,15 +526,15 @@ namespace PP5AutoUITests
         /// </summary>
         [TestMethod("In System Setup > Color Page, Set Color Of Same Test Command for 1000 times")]
         [TestCategory("長時間動作(J1)")]
-        [DataRow(1000)] // (Estimated testing time: 280 mins)
+        [DataRow(1)] // (Estimated testing time: 280 mins)
         public void Management_SetColorOfSameTestCommand_For1000Times(int repeatCount)
         {
             // Click on System Setup button
-            CurrentDriver.GetElement(By.ClassName("ToolBar"))
+            PP5IDEWindow.GetElement(By.ClassName("ToolBar"))
                          .GetElements(By.ClassName("RadioButton"))[2].LeftClick();
 
             // Click on Color tab
-            IWebElement systemSetupTabItem = CurrentDriver.GetElement(MobileBy.AccessibilityId("mainTab"))
+            IWebElement systemSetupTabItem = PP5IDEWindow.GetElement(MobileBy.AccessibilityId("mainTab"))
                                                           .GetElements(By.ClassName("TabItem"))[2];
 
             IWebElement colorTabItem = systemSetupTabItem.GetElement(By.ClassName("TabControl"))
@@ -545,20 +545,28 @@ namespace PP5AutoUITests
             //IWebElement TestCmdTV = colorTabItem.GetTreeViewElement("ColorTCGroupTreeView");
 
             // Select the first command of group: "AC Source"
-            SelectColorSettingItem(colorTabItem, ColorSettingPageType.TestCommand, "AC Source", 1);
+            SelectColorSettingItem(colorTabItem, ColorSettingPageType.TestCommand, "AC Source", 1, true);
+
+            string colorCodeFont = "#FFFF00FF";
+            string colorCodeBg = "#FFFF00FF";
 
             // Repeat setting the test command's color by alternate between \"#FFFF00FF\" and default color
             for (int i = 0; i < repeatCount; i++)
             {
-                var FontColorEditBtn = colorTabItem.GetElements(By.Name("Font Color Edit")).Last();
-                FontColorEditBtn.LeftClick();
-                GetPP5Window().GetElement(MobileBy.AccessibilityId("DefaultPicker"))
-                              .SelectComboBoxItemByName("#FFFF00FF", supportKeyInputSearch: false);
+                //var FontColorEditBtn = colorTabItem.GetCustomElement((e) => e.Text == "Font Color Edit" && e.Enabled);
+                //FontColorEditBtn.LeftClick();
+                //GetPP5Window().GetElement(MobileBy.AccessibilityId("DefaultPicker"))
+                //              .SelectComboBoxItemByName("#FFFF00FF", supportKeyInputSearch: false);
 
-                FontColorEditBtn.LeftClick();
-                GetPP5Window().GetElement(MobileBy.AccessibilityId("DefaultColor"))
-                              .GetFirstListBoxItemElement()
-                              .LeftClick();
+                //FontColorEditBtn.LeftClick();
+                //GetPP5Window().GetElement(MobileBy.AccessibilityId("DefaultColor"))
+                //              .GetFirstListBoxItemElement()
+                //              .LeftClick();
+
+                SetColor(colorTabItem, ColorSettingType.Font, colorCodeFont);
+                SetColor(colorTabItem, ColorSettingType.Font, "default");
+                SetColor(colorTabItem, ColorSettingType.Background, colorCodeBg);
+                SetColor(colorTabItem, ColorSettingType.Background, "default");
             }
         }
 

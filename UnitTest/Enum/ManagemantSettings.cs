@@ -22,4 +22,21 @@ namespace PP5AutoUITests
         [System.ComponentModel.Description("ColorTCGroupTreeView")]
         TestCommand,
     }
+
+    /// <summary>
+    /// 定義 System Setup > Color Setting page > Font or Background
+    /// </summary>
+    public enum ColorSettingType : int
+    {
+        /// <summary>
+        /// Font
+        /// </summary>
+        [System.ComponentModel.Description("Font Color Edit")]
+        Font = 0,
+        /// <summary>
+        /// Background
+        /// </summary>
+        [System.ComponentModel.Description("Background Color Edit")]
+        Background,
+    }
 }

@@ -7,7 +7,7 @@ using OpenQA.Selenium.Remote;
 namespace PP5AutoUITests
 {
     [TestClass]
-    public class UnitTest_Report: TestBase
+    public class ReportModuleTest: TestBase
     {
         #region By TI/TP TabControl Tests
 

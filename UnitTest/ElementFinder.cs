@@ -1,10 +1,14 @@
-﻿using System;
+﻿#define DEBUG
+using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Automation;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Chroma.UnitTest.Common;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
@@ -12,17 +16,19 @@ using OpenQA.Selenium.Appium.Windows;
 using OpenQA.Selenium.Html5;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.PageObjects;
+//using SeleniumExtras.PageObjects;
 using static OpenQA.Selenium.Support.UI.ExpectedConditions;
 
 namespace PP5AutoUITests
 {
     public static class ElementFinder
     {
-        #region Action Methods
-        public static WindowsElement FindElementByAbsoluteXPath(this WindowsDriver<WindowsElement> driver, string xPath, int nTryCount = 3)
+        #region Main Methods
+
+        #region Legacy Find Element methods
+        public static IWebElement FindElementByAbsoluteXPath(this WindowsDriver<WindowsElement> driver, string xPath, int nTryCount = 3)
         {
-            WindowsElement uiTarget = null;
+            IWebElement uiTarget = null;
 
             while (nTryCount-- > 0)
             {
@@ -47,9 +53,9 @@ namespace PP5AutoUITests
             return uiTarget;
         }
 
-        public static WindowsElement FindElementByAutomationId(this WindowsDriver<WindowsElement> driver, string AutomationId, int nTryCount = 3)
+        public static IWebElement FindElementByAutomationId(this WindowsDriver<WindowsElement> driver, string AutomationId, int nTryCount = 3)
         {
-            WindowsElement uiTarget = null;
+            IWebElement uiTarget = null;
 
             while (nTryCount-- > 0)
             {
@@ -74,15 +80,15 @@ namespace PP5AutoUITests
             return uiTarget;
         }
 
-        public static System.Collections.Generic.IReadOnlyCollection<WindowsElement> FindElementsByAutomationId(this WindowsDriver<WindowsElement> driver, string AutomationId, int nTryCount = 3)
+        public static ReadOnlyCollection<IWebElement> FindElementsByAutomationId(this WindowsDriver<WindowsElement> driver, string AutomationId, int nTryCount = 3)
         {
-            System.Collections.Generic.IReadOnlyCollection<WindowsElement> uiTargets = null;
+            ReadOnlyCollection<IWebElement> uiTargets = null;
 
             while (nTryCount-- > 0)
             {
                 try
                 {
-                    uiTargets = driver.FindElementsByAccessibilityId(AutomationId);
+                    uiTargets = (ReadOnlyCollection<IWebElement>)driver.FindElementsByAccessibilityId(AutomationId);
                 }
                 catch
                 {
@@ -101,9 +107,9 @@ namespace PP5AutoUITests
             return uiTargets;
         }
 
-        public static WindowsElement FindElementByName(this WindowsDriver<WindowsElement> driver, string Name, int nTryCount = 3)
+        public static IWebElement FindElementByName(this WindowsDriver<WindowsElement> driver, string Name, int nTryCount = 3)
         {
-            WindowsElement uiTarget = null;
+            IWebElement uiTarget = null;
 
             while (nTryCount-- > 0)
             {
@@ -128,9 +134,9 @@ namespace PP5AutoUITests
             return uiTarget;
         }
 
-        public static System.Collections.Generic.IReadOnlyCollection<WindowsElement> FindElementsByName(this WindowsDriver<WindowsElement> driver, string Name, int nTryCount = 3)
+        public static ReadOnlyCollection<IWebElement> FindElementsByName(this WindowsDriver<IWebElement> driver, string Name, int nTryCount = 3)
         {
-            System.Collections.Generic.IReadOnlyCollection<WindowsElement> uiTargets = null;
+            ReadOnlyCollection<IWebElement> uiTargets = null;
 
             while (nTryCount-- > 0)
             {
@@ -155,9 +161,9 @@ namespace PP5AutoUITests
             return uiTargets;
         }
 
-        public static WindowsElement GetElementById(this WindowsDriver<WindowsElement> driver, string automationId, string propertyName, int timeOut = 10000)
+        public static IWebElement GetElementById(this WindowsDriver<WindowsElement> driver, string automationId, string propertyName, int timeOut = 10000)
         {
-            WindowsElement element = null;
+            IWebElement element = null;
             var wait = new DefaultWait<WindowsDriver<WindowsElement>>(driver)
             {
                 Timeout = TimeSpan.FromMilliseconds(timeOut),
@@ -177,16 +183,16 @@ namespace PP5AutoUITests
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex}, {automationId}, {propertyName}");
+                Logger.LogMessage($"{ex}, {automationId}, {propertyName}");
                 Assert.Fail(ex.Message);
             }
 
             return element;
         }
 
-        public static WindowsElement GetElementByName(this WindowsDriver<WindowsElement> driver, string name, string propertyName, int timeOut = 10000)
+        public static IWebElement GetElementByName(this WindowsDriver<WindowsElement> driver, string name, string propertyName, int timeOut = 10000)
         {
-            WindowsElement element = null;
+            IWebElement element = null;
             var wait = new DefaultWait<WindowsDriver<WindowsElement>>(driver)
             {
                 Timeout = TimeSpan.FromMilliseconds(timeOut),
@@ -206,16 +212,16 @@ namespace PP5AutoUITests
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex}, {name}, {propertyName}");
+                Logger.LogMessage($"{ex}, {name}, {propertyName}");
                 Assert.Fail(ex.Message);
             }
 
             return element;
         }
 
-        public static System.Collections.Generic.IReadOnlyCollection<WindowsElement> GetElementsById(this WindowsDriver<WindowsElement> driver, string automationId, string propertyName, int timeOut = 10000)
+        public static ReadOnlyCollection<IWebElement> GetElementsById(this WindowsDriver<WindowsElement> driver, string automationId, string propertyName, int timeOut = 10000)
         {
-            System.Collections.Generic.IReadOnlyCollection<WindowsElement> elements = null;
+            ReadOnlyCollection<IWebElement> elements = null;
             var wait = new DefaultWait<WindowsDriver<WindowsElement>>(driver)
             {
                 Timeout = TimeSpan.FromMilliseconds(timeOut),
@@ -228,23 +234,23 @@ namespace PP5AutoUITests
             {
                 wait.Until(Driver =>
                 {
-                    elements = Driver.FindElementsByAccessibilityId(automationId);
+                    elements = (ReadOnlyCollection<IWebElement>)Driver.FindElementsByAccessibilityId(automationId);
 
                     return elements != null;
                 });
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex}, {automationId}, {propertyName}");
+                Logger.LogMessage($"{ex}, {automationId}, {propertyName}");
                 Assert.Fail(ex.Message);
             }
 
             return elements;
         }
 
-        public static System.Collections.Generic.IReadOnlyCollection<WindowsElement> GetElementsByName(this WindowsDriver<WindowsElement> driver, string name, string propertyName, int timeOut = 10000)
+        public static IReadOnlyCollection<IWebElement> GetElementsByName(this WindowsDriver<WindowsElement> driver, string name, string propertyName, int timeOut = 10000)
         {
-            System.Collections.Generic.IReadOnlyCollection<WindowsElement> elements = null;
+            IReadOnlyCollection<IWebElement> elements = null;
             var wait = new DefaultWait<WindowsDriver<WindowsElement>>(driver)
             {
                 Timeout = TimeSpan.FromMilliseconds(timeOut),
@@ -264,14 +270,133 @@ namespace PP5AutoUITests
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex}, {name}, {propertyName}");
+                Logger.LogMessage($"{ex}, {name}, {propertyName}");
                 Assert.Fail(ex.Message);
             }
 
             return elements;
         }
+        #endregion
 
-        public static IWebElement GetElement(this IWebDriver driver, By findType, int timeOut = 10000)
+        #region Find Element methods
+
+        #region Base method to FindElement with retry
+        // FindElement from driver, given By locator, retry
+        public static IWebElement FindElement(this IWebDriver driver, By by, int nTryCount = 3)
+        {
+            IWebElement uiTarget = null;
+
+            while (nTryCount-- > 0)
+            {
+                try
+                {
+                    uiTarget = driver.FindElement(by);
+                }
+                catch
+                {
+                }
+
+                if (uiTarget != null)
+                {
+                    break;
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(10);
+                }
+            }
+
+            return uiTarget;
+        }
+
+        // FindElements from driver, given By locator, retry
+        public static ReadOnlyCollection<IWebElement> FindElements(this IWebDriver driver, By by, int nTryCount = 3)
+        {
+            ReadOnlyCollection<IWebElement> uiTargets = null;
+
+            while (nTryCount-- > 0)
+            {
+                try
+                {
+                    uiTargets = driver.FindElements(by);
+                }
+                catch
+                {
+                }
+
+                if (uiTargets != null)
+                {
+                    break;
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(10);
+                }
+            }
+
+            return uiTargets;
+        }
+
+        // FindElement from element, given By locator, retry
+        public static IWebElement FindElement(this IWebElement element, By by, int nTryCount = 3)
+        {
+            IWebElement uiTarget = null;
+
+            while (nTryCount-- > 0)
+            {
+                try
+                {
+                    uiTarget = element.FindElement(by);
+                }
+                catch
+                {
+                }
+
+                if (uiTarget != null)
+                {
+                    break;
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(10);
+                }
+            }
+
+            return uiTarget;
+        }
+
+        // FindElements from element, given By locator, retry
+        public static ReadOnlyCollection<IWebElement> FindElements(this IWebElement element, By by, int nTryCount = 3)
+        {
+            ReadOnlyCollection<IWebElement> uiTargets = null;
+
+            while (nTryCount-- > 0)
+            {
+                try
+                {
+                    uiTargets = element.FindElements(by);
+                }
+                catch
+                {
+                }
+
+                if (uiTargets != null)
+                {
+                    break;
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(10);
+                }
+            }
+
+            return uiTargets;
+        }
+        #endregion
+
+        #region GetElement No retry
+        // GetElement from driver, given By locator, timeOut
+        public static IWebElement GetElement(this IWebDriver driver, By findType, int timeOut = SharedSetting.NORMAL_TIMEOUT)
         {
             IWebElement element = null;
             //bool isElementClickable = false;
@@ -306,7 +431,7 @@ namespace PP5AutoUITests
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex.Message}, {Message}");
+                Logger.LogMessage($"{ex.Message}, {Message}");
                 return null;
                 //Assert.Fail(ex.Message);
             }
@@ -314,7 +439,8 @@ namespace PP5AutoUITests
             return element;
         }
 
-        public static IWebElement GetElement(this IWebElement elementSrc, By findType, int timeOut = 10000)
+        // GetElement from element, given By locator, timeOut
+        public static IWebElement GetElement(this IWebElement elementSrc, By findType, int timeOut = SharedSetting.NORMAL_TIMEOUT)
         {
             IWebElement element = null;
 
@@ -329,163 +455,56 @@ namespace PP5AutoUITests
             };
 
             wait.IgnoreExceptionTypes(typeof(WebDriverException));
-            
+
             try
             {
                 wait.Until(ElementSrc =>
                 {
                     element = ElementSrc.FindElement(findType);
-                    //if (!element.Displayed || !element.Enabled)
-                    //    return null;
-
                     return element;
-
-                    //return element != null;
                 });
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex.Message}, {Message}");
+                Logger.LogMessage($"{ex.Message}, {Message}");
                 return null;
-                //Assert.Fail(ex.Message);
             }
-
             return element;
         }
 
-        public static IWebElement GetElement(this IWebDriver driver, int timeOut = 10000, params By[] findTypes)
+        // GetElement from driver, given By[] locators, timeOut, retry
+        public static IWebElement GetElement(this IWebDriver driver, int timeOut = SharedSetting.NORMAL_TIMEOUT, params By[] findTypes)
         {
-            WindowsElement element = null;
-            WindowsElement elementSrcTemp = null;
-            DefaultWait<WindowsElement> waitElement;
-            DefaultWait<IWebDriver> waitDriver;
-
+            IWebElement element = null;
             int CurrFindElementDepth = 1;
             foreach (By type in findTypes)
             {
-                // Set error message if element not found
-                GetNotFoundMessageAndFindingText(type, out string Message);
-
-                try
+                // 20240830, Adam, modify the method to call get element method (single By)
+                if (CurrFindElementDepth == 1)
+                    element = driver.GetElement(type, timeOut);
+                else
                 {
-                    // Find the element by element info
-                    if (CurrFindElementDepth == 1)
-                    {
-                        waitDriver = new DefaultWait<IWebDriver>(driver)
-                        {
-                            Timeout = TimeSpan.FromMilliseconds(timeOut),
-
-                            Message = Message
-                        };
-                        waitDriver.IgnoreExceptionTypes(typeof(WebDriverException));
-
-                        //ExpectedConditions.AlertIsPresent
-                        waitDriver.Until(Driver =>
-                        {
-                            element = (WindowsElement)Driver.FindElement(type);
-                            //if (!element.Displayed || !element.Enabled)
-                            //    return null;
-
-                            return element;
-                            //return element != null;
-                        });
-
-                        //var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeOut));
-                        //element = (WindowsElement)wait.Until(drv => drv.FindElement(type));
-
-                        //return wait.Until(ctx => {
-                        //    var elem = ctx.FindElement(by);
-                        //    if (!elem.Displayed)
-                        //        return null;
-
-                        //    return elem;
-                        //});
-                    }
-                    else
-                    {
-                        waitElement = new DefaultWait<WindowsElement>(elementSrcTemp)
-                        {
-                            Timeout = TimeSpan.FromMilliseconds(timeOut),
-
-                            Message = Message
-                        };
-                        waitElement.IgnoreExceptionTypes(typeof(WebDriverException));
-
-                        waitElement.Until(elementSrc =>
-                        {
-                            element = (WindowsElement)elementSrc.FindElement(type);
-                            //if (!element.Displayed || !element.Enabled)
-                            //    return null;
-
-                            return element;
-                            //return element != null;
-                        });
-                    }
-
-                    // Update current element source for next element finding
-                    elementSrcTemp = element;
-
-                    CurrFindElementDepth++;
+                    element = element.GetElement(type, timeOut);
                 }
-                catch (WebDriverTimeoutException ex)
-                {
-                    Console.WriteLine($"{ex.Message}, {Message}");
-                    return null;
-                    //Assert.Fail(ex.Message);
-                }
+                CurrFindElementDepth++;
             }
-
             return element;
         }
 
-        public static IWebElement GetElement(this IWebElement elementSrc, int timeOut = 10000, params By[] findTypes)
+        // GetElement from element, given By[] locators, timeOut, retry
+        public static IWebElement GetElement(this IWebElement elementSrc, int timeOut = SharedSetting.NORMAL_TIMEOUT, params By[] findTypes)
         {
-            WindowsElement element = null;
-            WindowsElement elementSrcTemp = elementSrc as WindowsElement;
-
-            foreach ( By type in findTypes ) 
+            IWebElement element = elementSrc;
+            foreach (By type in findTypes)
             {
-                // Set error message if element not found
-                GetNotFoundMessageAndFindingText(type, out string Message);
-
-                // Find the element by element info
-                var wait = new DefaultWait<WindowsElement>(elementSrcTemp)
-                {
-                    Timeout = TimeSpan.FromMilliseconds(timeOut),
-
-                    Message = Message
-                };
-
-                wait.IgnoreExceptionTypes(typeof(WebDriverException));
-
-                try
-                {
-                    wait.Until(ElementSrc =>
-                    {
-                        element = (WindowsElement)ElementSrc.FindElement(type);
-                        //if (!element.Displayed || !element.Enabled)
-                        //    return null;
-
-                        return element;
-
-                        //return element != null;
-                    });
-
-                    // Update current element source for next element finding
-                    elementSrcTemp = element;
-                }
-                catch (WebDriverTimeoutException ex)
-                {
-                    Console.WriteLine($"{ex.Message}, {Message}");
-                    return null;
-                    //Assert.Fail(ex.Message);
-                }
+                // 20240830, Adam, modify the method to call get element method (single By)
+                element = element.GetElement(type, timeOut);
             }
-
             return element;
         }
 
-        public static ReadOnlyCollection<IWebElement> GetElements(this IWebDriver driver, By findType, int timeOut = 10000)
+        // GetElements from driver, given By locator, timeOut, retry
+        public static ReadOnlyCollection<IWebElement> GetElements(this IWebDriver driver, By findType, int timeOut = SharedSetting.NORMAL_TIMEOUT)
         {
             ReadOnlyCollection<IWebElement> elements = null;
 
@@ -499,35 +518,25 @@ namespace PP5AutoUITests
                 Message = Message
             };
 
-            //wait.IgnoreExceptionTypes(typeof(WebDriverException));
-
             try
             {
                 wait.Until(Driver =>
                 {
                     elements = Driver.FindElements(findType);
-                    //if (!elements.All(e => e.Displayed))
-                    //    return null;
-
-                    //return elements;
                     return elements != null;
                 });
-
-                //var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeOut));
-                //elements = wait.Until(drv => drv.FindElements(findType));
             }
 
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex.Message}, {Message}");
+                Logger.LogMessage($"{ex.Message}, {Message}");
                 return null;
-                //Assert.Fail(ex.Message);
             }
-
             return elements;
         }
 
-        public static ReadOnlyCollection<IWebElement> GetElements(this IWebElement elementSrc, By findType, int timeOut = 10000)
+        // GetElements from element, given By locator, timeOut, retry
+        public static ReadOnlyCollection<IWebElement> GetElements(this IWebElement elementSrc, By findType, int timeOut = SharedSetting.NORMAL_TIMEOUT)
         {
             ReadOnlyCollection<IWebElement> elements = null;
 
@@ -548,6 +557,303 @@ namespace PP5AutoUITests
                 wait.Until(ElementSrc =>
                 {
                     elements = ElementSrc.FindElements(findType);
+                    return elements != null;
+                });
+            }
+            catch (WebDriverTimeoutException ex)
+            {
+                Logger.LogMessage($"{ex.Message}, {Message}");
+                return null;
+            }
+            return elements;
+        }
+
+        public static ReadOnlyCollection<IWebElement> GetElements(this IWebElement elementSrc, ByAutomationIdOrName findType, int timeOut = SharedSetting.NORMAL_TIMEOUT)
+        {
+            ReadOnlyCollection<IWebElement> elements = null;
+
+            // Set error message if element not found
+            GetNotFoundMessageAndFindingText(findType, out string Message);
+
+            var wait = new DefaultWait<IWebElement>(elementSrc)
+            {
+                Timeout = TimeSpan.FromMilliseconds(timeOut),
+
+                Message = Message
+            };
+
+            wait.IgnoreExceptionTypes(typeof(WebDriverException));
+
+            try
+            {
+                wait.Until(ElementSrc =>
+                {
+                    elements = ElementSrc.FindElements(findType);
+                    return elements != null;
+                });
+            }
+            catch (WebDriverTimeoutException ex)
+            {
+                Logger.LogMessage($"{ex.Message}, {Message}");
+                return null;
+            }
+            return elements;
+        }
+        #endregion
+
+        #region GetElement with retry
+        // GetElement from element, given By locator, timeOut, retry
+        public static IWebElement GetElementWithRetry(this IWebElement elementSrc, By findType, int timeOut = SharedSetting.NORMAL_TIMEOUT, int nTryCount = 3)
+        {
+            IWebElement element = null;
+
+            // Set error message if element not found
+            GetNotFoundMessageAndFindingText(findType, out string Message);
+
+            var wait = new DefaultWait<IWebElement>(elementSrc)
+            {
+                Timeout = TimeSpan.FromMilliseconds(timeOut),
+
+                Message = Message
+            };
+
+            wait.IgnoreExceptionTypes(typeof(WebDriverException));
+            
+            try
+            {
+                wait.Until(ElementSrc =>
+                {
+                    element = ElementSrc.FindElement(findType, nTryCount);      // 20240830, Adam, add retry when getting element
+                    //if (!element.Displayed || !element.Enabled)
+                    //    return null;
+
+                    return element;
+
+                    //return element != null;
+                });
+            }
+            catch (WebDriverTimeoutException ex)
+            {
+                Logger.LogMessage($"{ex.Message}, {Message}");
+                return null;
+                //Assert.Fail(ex.Message);
+            }
+
+            return element;
+        }
+
+        // GetElement from driver, given By[] locators, timeOut, retry
+        public static IWebElement GetElementWithRetry(this IWebDriver driver, int timeOut = SharedSetting.NORMAL_TIMEOUT, int nTryCount = 3, params By[] findTypes)
+        {
+            IWebElement element = null;
+            //IWebElement elementSrcTemp = null;
+            //DefaultWait<IWebElement> waitElement;
+            //DefaultWait<IWebDriver> waitDriver;
+
+            int CurrFindElementDepth = 1;
+            foreach (By type in findTypes)
+            {
+                // 20240830, Adam, modify the method to call get element method (single By)
+                if (CurrFindElementDepth == 1)
+                    element = driver.GetElement(type, timeOut);
+                else
+                {
+                    element = element.GetElementWithRetry(type, timeOut, nTryCount);
+                }
+                CurrFindElementDepth++;
+
+                //// Set error message if element not found
+                //GetNotFoundMessageAndFindingText(type, out string Message);
+
+                //try
+                //{
+                //    // Find the element by element info
+                //    if (CurrFindElementDepth == 1)
+                //    {
+                //        waitDriver = new DefaultWait<IWebDriver>(driver)
+                //        {
+                //            Timeout = TimeSpan.FromMilliseconds(timeOut),
+
+                //            Message = Message
+                //        };
+                //        waitDriver.IgnoreExceptionTypes(typeof(WebDriverException));
+
+                //        //ExpectedConditions.AlertIsPresent
+                //        //waitDriver.Until(Driver =>
+                //        //{
+                //        //    element = (IWebElement)Driver.FindElement(type);
+                //        //    //if (!element.Displayed || !element.Enabled)
+                //        //    //    return null;
+
+                //        //    return element;
+                //        //    //return element != null;
+                //        //});
+                //        element = waitDriver.Until(ElementToBeClickable(type));
+
+                //        //var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeOut));
+                //        //element = (WindowsElement)wait.Until(drv => drv.FindElement(type));
+
+                //        //return wait.Until(ctx => {
+                //        //    var elem = ctx.FindElement(by);
+                //        //    if (!elem.Displayed)
+                //        //        return null;
+
+                //        //    return elem;
+                //        //});
+                //    }
+                //    else
+                //    {
+                //        waitElement = new DefaultWait<IWebElement>(elementSrcTemp)
+                //        {
+                //            Timeout = TimeSpan.FromMilliseconds(timeOut),
+
+                //            Message = Message
+                //        };
+                //        waitElement.IgnoreExceptionTypes(typeof(WebDriverException));
+
+                //        waitElement.Until(elementSrc =>
+                //        {
+                //            element = elementSrc.FindElement(type, nTryCount);
+                //            //if (!element.Displayed || !element.Enabled)
+                //            //    return null;
+
+                //            return element;
+                //            //return element != null;
+                //        });
+                //    }
+
+                //    // Update current element source for next element finding
+                //    elementSrcTemp = element;
+
+                //    CurrFindElementDepth++;
+                //}
+                //catch (WebDriverTimeoutException ex)
+                //{
+                //    Logger.LogMessage($"{ex.Message}, {Message}");
+                //    return null;
+                //    //Assert.Fail(ex.Message);
+                //}
+            }
+
+            return element;
+        }
+
+        // GetElement from element, given By[] locators, timeOut, retry
+        public static IWebElement GetElementWithRetry(this IWebElement elementSrc, int timeOut = SharedSetting.NORMAL_TIMEOUT, int nTryCount = 3, params By[] findTypes)
+        {
+            IWebElement element = elementSrc;
+            //IWebElement elementSrcTemp = elementSrc;
+
+            foreach (By type in findTypes) 
+            {
+                //// Set error message if element not found
+                //GetNotFoundMessageAndFindingText(type, out string Message);
+
+                //// Find the element by element info
+                //var wait = new DefaultWait<IWebElement>(elementSrc)
+                //{
+                //    Timeout = TimeSpan.FromMilliseconds(timeOut),
+
+                //    Message = Message
+                //};
+
+                //wait.IgnoreExceptionTypes(typeof(WebDriverException));
+
+                //try
+                //{
+                //    wait.Until(ElementSrc =>
+                //    {
+                //        element = ElementSrc.FindElement(type, nTryCount);
+                //        //if (!element.Displayed || !element.Enabled)
+                //        //    return null;
+
+                //        return element;
+
+                //        //return element != null;
+                //    });
+
+                //    // Update current element source for next element finding
+                //    elementSrcTemp = element;
+                //}
+                //catch (WebDriverTimeoutException ex)
+                //{
+                //    Logger.LogMessage($"{ex.Message}, {Message}");
+                //    return null;
+                //    //Assert.Fail(ex.Message);
+                //}
+
+                // 20240830, Adam, modify the method to call get element method (single By)
+                element = element.GetElementWithRetry(type, timeOut, nTryCount);
+            }
+
+            return element;
+        }
+
+        // GetElements from driver, given By locator, timeOut, retry
+        public static ReadOnlyCollection<IWebElement> GetElementsWithRetry(this IWebDriver driver, By findType, int timeOut = SharedSetting.NORMAL_TIMEOUT, int nTryCount = 3)
+        {
+            ReadOnlyCollection<IWebElement> elements = null;
+
+            // Set error message if element not found
+            GetNotFoundMessageAndFindingText(findType, out string Message);
+
+            var wait = new DefaultWait<IWebDriver>(driver)
+            {
+                Timeout = TimeSpan.FromMilliseconds(timeOut),
+
+                Message = Message
+            };
+
+            //wait.IgnoreExceptionTypes(typeof(WebDriverException));
+
+            try
+            {
+                wait.Until(Driver =>
+                {
+                    elements = Driver.FindElements(findType, nTryCount);        // 20240830, Adam, add retry when getting element
+                    //if (!elements.All(e => e.Displayed))
+                    //    return null;
+
+                    //return elements;
+                    return elements != null;
+                });
+
+                //var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeOut));
+                //elements = wait.Until(drv => drv.FindElements(findType));
+            }
+
+            catch (WebDriverTimeoutException ex)
+            {
+                Logger.LogMessage($"{ex.Message}, {Message}");
+                return null;
+                //Assert.Fail(ex.Message);
+            }
+
+            return elements;
+        }
+
+        // GetElements from element, given By locator, timeOut, retry
+        public static ReadOnlyCollection<IWebElement> GetElementsWithRetry(this IWebElement elementSrc, By findType, int timeOut = SharedSetting.NORMAL_TIMEOUT, int nTryCount = 3)
+        {
+            ReadOnlyCollection<IWebElement> elements = null;
+
+            // Set error message if element not found
+            GetNotFoundMessageAndFindingText(findType, out string Message);
+
+            var wait = new DefaultWait<IWebElement>(elementSrc)
+            {
+                Timeout = TimeSpan.FromMilliseconds(timeOut),
+
+                Message = Message
+            };
+
+            wait.IgnoreExceptionTypes(typeof(WebDriverException));
+
+            try
+            {
+                wait.Until(ElementSrc =>
+                {
+                    elements = ElementSrc.FindElements(findType, nTryCount);      // 20240830, Adam, add retry when getting element
                     //if (!elements.All(e => e.Displayed))
                     //    return null;
 
@@ -557,17 +863,21 @@ namespace PP5AutoUITests
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex.Message}, {Message}");
+                Logger.LogMessage($"{ex.Message}, {Message}");
                 return null;
                 //Assert.Fail(ex.Message);
             }
 
             return elements;
         }
+        #endregion
 
-        public static bool CheckElementExisted(this IWebDriver driver, By ByElementInfo, int timeOut = 1500, int pollingInterval = 500)
+        #endregion
+
+        #region Element related methods
+        public static bool CheckElementExisted(this IWebDriver driver, By ByElementInfo, int timeOut = SharedSetting.SUPERSHORT_TIMEOUT, int sleepingInterval = 500)
         {
-            WindowsElement element = null;
+            IWebElement element = null;
             DefaultWait<IWebDriver> waitDriver;
 
             // Set error message if element not found
@@ -576,13 +886,13 @@ namespace PP5AutoUITests
             try
             {
                 // Find the element by element info
-                waitDriver = new WebDriverWait(new SystemClock(), driver, TimeSpan.FromMilliseconds(timeOut), TimeSpan.FromMilliseconds(pollingInterval));
+                waitDriver = new WebDriverWait(new SystemClock(), driver, TimeSpan.FromMilliseconds(timeOut), TimeSpan.FromMilliseconds(sleepingInterval));
                 waitDriver.IgnoreExceptionTypes(typeof(WebDriverException));
-                element = (WindowsElement)waitDriver.Until(ElementIsVisible(ByElementInfo));
+                element = (IWebElement)waitDriver.Until(ElementIsVisible(ByElementInfo));
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex.Message}, {Message}");
+                Logger.LogMessage($"{ex.Message}, {Message}");
                 return false;
                 //Assert.Fail(ex.Message);
             }
@@ -598,12 +908,12 @@ namespace PP5AutoUITests
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Logger.LogMessage(ex.Message);
                 return false;
             }
         }
 
-        public static bool CheckWindowTitle(this IWebDriver driver, string WindowTitle, int timeOut = 2000)
+        public static bool CheckWindowTitle(this IWebDriver driver, string WindowTitle, int timeOut = SharedSetting.SHORT_TIMEOUT)
         {
             bool isWindowOpened = false;
             DefaultWait<IWebDriver> waitDriver;
@@ -621,7 +931,7 @@ namespace PP5AutoUITests
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex.Message}, {Message}");
+                Logger.LogMessage($"{ex.Message}, {Message}");
                 return false;
                 //Assert.Fail(ex.Message);
             }
@@ -629,7 +939,7 @@ namespace PP5AutoUITests
             return isWindowOpened;
         }
 
-        public static bool CheckElementSelected(this IWebDriver driver, IWebElement element, int timeOut = 100)
+        public static bool CheckElementSelected(this IWebDriver driver, IWebElement element, int timeOut = SharedSetting.EXTREMESHORT_TIMEOUT)
         {
             bool isElementSelected = false;
             DefaultWait<IWebDriver> waitDriver;
@@ -647,7 +957,7 @@ namespace PP5AutoUITests
             }
             catch (WebDriverTimeoutException ex)
             {
-                Console.WriteLine($"{ex.Message}, {Message}");
+                Logger.LogMessage($"{ex.Message}, {Message}");
                 return false;
                 //Assert.Fail(ex.Message);
             }
@@ -693,6 +1003,7 @@ namespace PP5AutoUITests
         {
             return element.hasAttribute("BoundingRectangle");
         }
+        #endregion
 
         //public static IAlert CheckAlertWindowOpened(this IWebDriver driver, int timeOut = 100)
         //{
@@ -997,6 +1308,16 @@ namespace PP5AutoUITests
             return elementSrc.GetSpecificChildOfControlType(ElementControlType.TabControl, elementName, searchType);
         }
 
+        public static string GetListBoxItemContent(this IWebElement elementSrc, string elementName, ElementSearchType searchType = ElementSearchType.BFS)
+        {
+            return elementSrc.GetSpecificChildContentOfControlType(ElementControlType.ListBoxItem, elementName, searchType);
+        }
+
+        public static IWebElement GetListBoxItemElement(this IWebElement elementSrc, string elementName, ElementSearchType searchType = ElementSearchType.BFS)
+        {
+            return elementSrc.GetSpecificChildOfControlType(ElementControlType.ListBoxItem, elementName, searchType);
+        }
+
 
         /// <summary>
         /// Get specific kind of control element or element's content by index
@@ -1077,6 +1398,16 @@ namespace PP5AutoUITests
             return elementSrc.GetSpecificChildOfControlType(ElementControlType.ToolBar, condition);
         }
 
+        public static IWebElement GetCustomElement(this IWebElement elementSrc, Func<IWebElement, bool> condition)
+        {
+            return elementSrc.GetSpecificChildOfControlType(ElementControlType.Custom, condition);
+        }
+
+        public static IWebElement GetCustomElement(this IWebElement elementSrc, string childName, Func<IWebElement, bool> condition)
+        {
+            return elementSrc.GetSpecificChildOfControlType(ElementControlType.Custom, childName, condition);
+        }
+
         /// <summary>
         /// Get specific kind of control element collection
         /// </summary>
@@ -1095,6 +1426,11 @@ namespace PP5AutoUITests
         public static ReadOnlyCollection<IWebElement> GetMenuItems(this IWebElement elementSrc)
         {
             return elementSrc.GetSpecificChildrenOfControlType(ElementControlType.MenuItem);
+        }
+
+        public static ReadOnlyCollection<IWebElement> GetTreeViewItems(this IWebElement elementSrc)
+        {
+            return elementSrc.GetSpecificChildrenOfControlType(ElementControlType.TreeViewItem);
         }
 
         #region Base Methods
@@ -1203,12 +1539,28 @@ namespace PP5AutoUITests
                 return elementSrc.GetSpecificChildOfControlTypeByDFS(elementType, childName);
         }
 
+        public static IWebElement GetSpecificChildOfControlType(this IWebElement elementSrc, ElementControlType elementType, Func<IWebElement, bool> condition, ElementSearchType searchType = ElementSearchType.BFS)
+        {
+            if (searchType == ElementSearchType.BFS)
+                return elementSrc.GetSpecificChildOfControlTypeByBFS(elementType, condition);
+            else
+                return elementSrc.GetSpecificChildOfControlTypeByDFS(elementType, condition);
+        }
+
+        public static IWebElement GetSpecificChildOfControlType(this IWebElement elementSrc, ElementControlType elementType, string childName, Func<IWebElement, bool> condition, ElementSearchType searchType = ElementSearchType.BFS)
+        {
+            if (searchType == ElementSearchType.BFS)
+                return elementSrc.GetSpecificChildOfControlTypeByBFS(elementType, childName, condition);
+            else
+                return elementSrc.GetSpecificChildOfControlTypeByDFS(elementType, childName, condition);
+        }
+
         // Get Specific Child by ControlType and child index (DFS)
         public static IWebElement GetSpecificChildOfControlTypeByDFS(this IWebElement elementSrc, ElementControlType elementType, int childIndex = 0)
         {
             //ReadOnlyCollection<IWebElement> children = elementSrc.GetChildElements();
             IWebElement elementFound;
-            ReadOnlyCollection<IWebElement> elementsMatched = elementSrc.GetElements(By.TagName(elementType.GetDescription()));
+            ReadOnlyCollection<IWebElement> elementsMatched = elementSrc.GetElements(GetLocatorByElementType(elementType) as By);
 
             if (childIndex == 0)
                 elementFound = elementsMatched.FirstOrDefault();
@@ -1262,10 +1614,21 @@ namespace PP5AutoUITests
             //var children = elementSrc.GetElements(By.ClassName(elementType.ToString()));
             //Console.WriteLine($"elementType: \"{elementType.ToString()}\"");
 
-            ReadOnlyCollection<IWebElement> elementsMatched = elementSrc.GetElements(By.TagName(elementType.GetDescription()));
+            //ReadOnlyCollection<IWebElement> elementsMatched = elementSrc.GetElements(By.TagName(elementType.GetDescription()));
+
+            // Get element with Element locator (By/ByIdOrName)
+            ReadOnlyCollection<IWebElement> elementsMatched = null;
+            if (GetLocatorByElementType(elementType, childName) is ByAutomationIdOrName byIdOrNameLocator)
+            {
+                elementsMatched = elementSrc.GetElements(byIdOrNameLocator);
+            }
+            else if (GetLocatorByElementType(elementType, childName) is By byLocator)
+            {
+                elementsMatched = elementSrc.GetElements(byLocator);
+            }
+            
             IWebElement elementFound = elementsMatched.FirstOrDefault(e => e.CheckElementHasNameOrId(childName));
             if (elementFound != null) { return elementFound; }
-
 #if DEBUG
                     Console.WriteLine($"elementSrc: {elementSrc.Text}");
                     Console.WriteLine($"ChildElementsCount: {elementSrc.GetChildElementsCount()}");
@@ -1290,7 +1653,6 @@ namespace PP5AutoUITests
             //                 .SingleOrDefault();
         }
 
-
         // Get Specific Child by ControlType and child index (BFS)
         public static IWebElement GetSpecificChildOfControlTypeByBFS(this IWebElement elementSrc, ElementControlType elementType, int childIndex = 0)
         {
@@ -1305,7 +1667,7 @@ namespace PP5AutoUITests
 
                 // Check if the current element matches the criteria
                 IWebElement elementFound;
-                ReadOnlyCollection<IWebElement> elementsMatched = currentElement.GetElements(By.TagName(elementType.GetDescription()));
+                ReadOnlyCollection<IWebElement> elementsMatched = currentElement.GetElements(GetLocatorByElementType(elementType) as By);
 
                 if (childIndex == 0)
                     elementFound = elementsMatched.FirstOrDefault();
@@ -1332,14 +1694,10 @@ namespace PP5AutoUITests
             return null;
         }
 
-
         // Assuming necessary namespaces are already included
         // Get Specific Child by ControlType and element name/Id (BFS)
         public static IWebElement GetSpecificChildOfControlTypeByBFS(this IWebElement elementSrc, ElementControlType elementType, string childName)
         {
-            // Element locator
-            By locator;
-
             // Create a queue for BFS and enqueue the starting element
             Queue<IWebElement> queue = new Queue<IWebElement>();
             queue.Enqueue(elementSrc);
@@ -1352,8 +1710,17 @@ namespace PP5AutoUITests
                 // Check if the current element matches the criteria
                 //Console.WriteLine($"TagName to query: {elementType.GetDescription()}");
 
-                locator = GetLocatorByElementType(elementType, childName);
-                ReadOnlyCollection<IWebElement> elementsMatched = currentElement.GetElements(locator);
+                // Get element with Element locator (By/ByIdOrName)
+                ReadOnlyCollection<IWebElement> elementsMatched = null;
+                if (GetLocatorByElementType(elementType, childName) is ByAutomationIdOrName byIdOrNameLocator)
+                {
+                    elementsMatched = currentElement.GetElements(byIdOrNameLocator);
+                }
+                else if (GetLocatorByElementType(elementType, childName) is By byLocator)
+                {
+                    elementsMatched = currentElement.GetElements(byLocator);
+                }
+
                 //ReadOnlyCollection<IWebElement> elementsMatched = currentElement.GetElements(By.TagName(elementType.GetDescription()));
                 IWebElement elementFound = elementsMatched.FirstOrDefault(e => e.CheckElementHasNameOrId(childName));
                 if (elementFound != null)
@@ -1375,14 +1742,15 @@ namespace PP5AutoUITests
             return null;
         }
 
-
         // Get Child by ControlType and condition (DFS)
-        public static IWebElement GetSpecificChildOfControlType(this IWebElement elementSrc, ElementControlType elementType, Func<IWebElement, bool> condition)
+        public static IWebElement GetSpecificChildOfControlTypeByDFS(this IWebElement elementSrc, ElementControlType elementType, Func<IWebElement, bool> condition)
         {
             //ReadOnlyCollection<IWebElement> children = elementSrc.GetChildElements();
             //elementFound = children.FirstOrDefault(e => e.TagName == elementType.GetDescription() && condition(e));
-            
-            IWebElement elementFound = elementSrc.GetElements(By.ClassName(elementType.ToString()))
+
+            // Element locator
+            By locator = GetLocatorByElementType(elementType) as By;
+            IWebElement elementFound = elementSrc.GetElements(locator)
                                                  .FirstOrDefault(e => condition(e));
 
             if (elementFound != null) { return elementFound; }
@@ -1402,6 +1770,151 @@ namespace PP5AutoUITests
             return elementFound;
         }
 
+        // Get Child by ControlType and condition (BFS)
+        public static IWebElement GetSpecificChildOfControlTypeByBFS(this IWebElement elementSrc, ElementControlType elementType, Func<IWebElement, bool> condition)
+        {
+            //ReadOnlyCollection<IWebElement> children = elementSrc.GetChildElements();
+            //elementFound = children.FirstOrDefault(e => e.TagName == elementType.GetDescription() && condition(e));
+
+            // Create a queue for BFS and enqueue the starting element
+            Queue<IWebElement> queue = new Queue<IWebElement>();
+            queue.Enqueue(elementSrc);
+
+            while (queue.Count > 0)
+            {
+                // Dequeue the front element
+                IWebElement currentElement = queue.Dequeue();
+                IWebElement elementFound = currentElement.GetElements(GetLocatorByElementType(elementType) as By)
+                                                         .FirstOrDefault(e => condition(e));
+
+                if (elementFound != null) { return elementFound; }
+
+                // Enqueue all child elements
+                foreach (var child in currentElement.GetChildElements())
+                {
+                    queue.Enqueue(child);
+                }
+            }
+
+            // Return an empty collection if no matching element was found
+            return null;
+        }
+
+        // Get Child by ControlType, childName and condition (DFS)
+        public static IWebElement GetSpecificChildOfControlTypeByDFS(this IWebElement elementSrc, ElementControlType elementType, string childName, Func<IWebElement, bool> condition)
+        {
+            //ReadOnlyCollection<IWebElement> children = elementSrc.GetChildElements();
+            //elementFound = children.FirstOrDefault(e => e.TagName == elementType.GetDescription() && condition(e));
+
+            // Get element with Element locator (By/ByAutomationIdOrName)
+            IWebElement elementFound = null;
+            if (GetLocatorByElementType(elementType, childName) is ByAutomationIdOrName byIdOrNameLocator)
+            {
+                elementFound = elementSrc.GetElements(byIdOrNameLocator)
+                                         .FirstOrDefault(e => condition(e));
+            }
+            else if(GetLocatorByElementType(elementType, childName) is By byLocator)
+            {
+                elementFound = elementSrc.GetElements(byLocator)
+                                         .FirstOrDefault(e => condition(e));
+            }
+
+            if (elementFound != null) { return elementFound; }
+
+            foreach (var child in elementSrc.GetChildElements())
+            {
+                // Recursive call to search in child elements
+                IWebElement childElement = child.GetSpecificChildOfControlType(elementType, condition);
+
+                // If the element is found in the child hierarchy, return it
+                if (childElement != null)
+                {
+                    return childElement;
+                }
+            }
+
+            return elementFound;
+        }
+
+        // Get Child by ControlType, childName and condition (BFS)
+        public static IWebElement GetSpecificChildOfControlTypeByBFS(this IWebElement elementSrc, ElementControlType elementType, string childName, Func<IWebElement, bool> condition)
+        {
+            //ReadOnlyCollection<IWebElement> children = elementSrc.GetChildElements();
+            //elementFound = children.FirstOrDefault(e => e.TagName == elementType.GetDescription() && condition(e));
+
+            // Create a queue for BFS and enqueue the starting element
+            Queue<IWebElement> queue = new Queue<IWebElement>();
+            queue.Enqueue(elementSrc);
+
+            while (queue.Count > 0)
+            {
+                // Dequeue the front element
+                IWebElement currentElement = queue.Dequeue();
+
+                // Get element with Element locator (By/ByAutomationIdOrName)
+                IWebElement elementFound = null;
+                if (GetLocatorByElementType(elementType, childName) is ByAutomationIdOrName byIdOrNameLocator)
+                {
+                    elementFound = currentElement.GetElements(byIdOrNameLocator)
+                                                 .FirstOrDefault(e => condition(e));
+                }
+                else if (GetLocatorByElementType(elementType, childName) is By byLocator)
+                {
+                    elementFound = currentElement.GetElements(byLocator)
+                                                 .FirstOrDefault(e => condition(e));
+                }
+
+                if (elementFound != null) { return elementFound; }
+
+                // Enqueue all child elements
+                foreach (var child in currentElement.GetChildElements())
+                {
+                    queue.Enqueue(child);
+                }
+            }
+
+            // Return an empty collection if no matching element was found
+            return null;
+        }
+
+        // Get Child by ControlType and condition (BFS)
+        public static ReadOnlyCollection<IWebElement> GetSpecificChildrenOfControlType(this IWebElement elementSrc, ElementControlType elementType, Func<IWebElement, bool> condition)
+        {
+            // Create a queue for BFS and enqueue the starting element
+            Queue<IWebElement> queue = new Queue<IWebElement>();
+            queue.Enqueue(elementSrc);
+
+            while (queue.Count > 0)
+            {
+                // Dequeue the front element
+                IWebElement currentElement = queue.Dequeue();
+
+                // elements Found
+                List<IWebElement> elementsFound = currentElement.GetElements(GetLocatorByElementType(elementType) as By)
+                                                                .Where(condition)
+                                                                .ToList();
+                if (elementsFound.Count > 0)
+                {
+                    return elementsFound.AsReadOnly();
+                }
+
+                // Enqueue all child elements
+                foreach (var child in currentElement.GetChildElements())
+                {
+                    queue.Enqueue(child);
+                }
+            }
+
+            // Return an empty collection if no matching element was found
+            return new List<IWebElement>().AsReadOnly();
+        }
+
+        public static IEnumerable<string> GetSpecificChildrenContentOfControlType(this IWebElement elementSrc, ElementControlType elementType, Func<IWebElement, bool> condition)
+        {
+            ReadOnlyCollection<IWebElement> elementsFound = elementSrc.GetSpecificChildrenOfControlType(elementType, condition);
+            IEnumerable<string> elementContents = elementsFound != null ? elementsFound.Select(x => x.Text) : null;
+            return elementContents;
+        }
 
         // Get Children by ControlType (DFS)
         public static ReadOnlyCollection<IWebElement> GetSpecificChildrenOfControlType(this IWebElement elementSrc, ElementControlType elementType)
@@ -1414,23 +1927,35 @@ namespace PP5AutoUITests
             //var children = elementSrc.GetChildElements();
             //var elementsFound = children.ToList().FindAll(e => e.TagName == elementType.GetDescription());
 
-            ReadOnlyCollection<IWebElement> elementsFound = elementSrc.GetElements(By.TagName(elementType.GetDescription()));
-
-            if (elementsFound != null) { return elementsFound; }
-
-            foreach (var child in elementSrc.GetChildElements())
+            try
             {
-                // Recursive call to search in child elements
-                ReadOnlyCollection<IWebElement> grandChildren = GetSpecificChildrenOfControlType(child, elementType);
+#if DEBUG
+                Logger.LogMessage($"elementSrc.TagName:{elementSrc.TagName}");
+#endif
+                ReadOnlyCollection<IWebElement> elementsFound = elementSrc.GetElements(GetLocatorByElementType(elementType) as By);
 
-                // If the elements is found in the child hierarchy, return it
-                if (grandChildren != null)
+                if (elementsFound != null) { return elementsFound; }
+
+                foreach (var child in elementSrc.GetChildElements())
                 {
-                    return grandChildren;
-                }
-            }
+                    // Recursive call to search in child elements
+                    ReadOnlyCollection<IWebElement> grandChildren = GetSpecificChildrenOfControlType(child, elementType);
 
-            return elementsFound;
+                    // If the elements is found in the child hierarchy, return it
+                    if (grandChildren != null)
+                    {
+                        return grandChildren;
+                    }
+                }
+
+                return elementsFound;
+            }
+            catch (ArgumentNullException ex)
+            {
+                string Message = $"element type is: \"{elementType.ToString()}\"";
+                Logger.LogMessage($"{ex.Message}, {Message}");
+                return null;
+            }
         }
 
         public static IWebElement GetFirstChildOfControlType(this IWebElement elementSrc, ElementControlType elementType, ElementSearchType searchType = ElementSearchType.BFS)
@@ -1446,7 +1971,7 @@ namespace PP5AutoUITests
 
 #endregion
 
-#endregion
+        #endregion
 
         #region DataTable Methods
 
@@ -1636,15 +2161,10 @@ namespace PP5AutoUITests
 
         public static string GetCellValue(this IWebElement cellElement)
         {
-            string cellValue;
             if (cellElement == null)
                 return null;
             else
-            {
-                //cellValue = cellElement.GetAttribute("Value.Value");
-                return cellElement.GetAttribute("Value.Value");
-            }
-                
+                return !cellElement.GetAttribute("Value.Value").IsEmpty() ? cellElement.GetAttribute("Value.Value") : cellElement.GetFirstTextContent();
         }
 
         public static IEnumerable<IWebElement> GetColumnBy(this IWebElement dataGridElement, int colNo)
@@ -1690,6 +2210,8 @@ namespace PP5AutoUITests
 
         #endregion
 
+        #region MISC
+
         private static void GetNotFoundMessageAndFindingText(By findType, out string Message)
         {
             Message = string.Empty;
@@ -1726,9 +2248,14 @@ namespace PP5AutoUITests
                 toFind = findType.ToString().Replace("By.TagName: ", "");
                 Message = $"Element with TagName: \"{toFind}\" not found.";
             }
+            else if (findType.ToString().StartsWith("ByAutomationIdOrName"))
+            {
+                toFind = findType.ToString().Replace("ByAutomationIdOrName", "");
+                Message = $"Element with Id Or Name: \"{toFind}\" not found.";
+            }
         }
 
-        public static By GetLocatorByElementType(ElementControlType controlType, string locatorValue)
+        public static object GetLocatorByElementType(ElementControlType controlType, string locatorValue = "")
         {
             switch (controlType) 
             {
@@ -1767,8 +2294,13 @@ namespace PP5AutoUITests
                 case ElementControlType.Thumb:
                 case ElementControlType.Group:
                 case ElementControlType.Custom:
-                    return MobileBy.AccessibilityId(locatorValue);
-                    
+                    if (!locatorValue.IsNullOrEmpty())
+                        return new ByAutomationIdOrName(locatorValue);
+                    else
+#if DEBUG
+                        Logger.LogMessage($"controlType.GetDescription():{controlType.GetDescription()}");
+#endif
+                        return By.TagName(controlType.GetDescription());
                 default:
                     return By.ClassName(controlType.ToString());
             }
@@ -1797,5 +2329,6 @@ namespace PP5AutoUITests
         {
             return element.GetAttribute(attributeName) != null ? true : false;
         }
+#endregion
     }
 }

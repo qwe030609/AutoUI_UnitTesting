@@ -7,7 +7,7 @@ using OpenQA.Selenium.Remote;
 namespace PP5AutoUITests
 {
     [TestClass]
-    public class UnitTest_TIEditor : TestBase
+    public class TIEditorModuleTest : TestBase
     {
         #region Combo Action Tests
 
@@ -82,7 +82,7 @@ namespace PP5AutoUITests
             AddCommandBy(GroupName, CommandName);
 
             // Check command name the same
-            CommandName.ShouldEqualTo(GetCellValue("PGGrid", 0, "Test Command"));
+            CommandName.ShouldEqualTo(GetCellValue("PGGrid", 1, "Test Command"));
         }
 
         [TestMethod]
@@ -100,7 +100,7 @@ namespace PP5AutoUITests
             AddCommandBy(GroupName, CommandName);
 
             // Check command name the same
-            CommandName.ShouldEqualTo(GetCellValue("PGGrid", 0, "Test Command"));
+            CommandName.ShouldEqualTo(GetCellValue("PGGrid", 1, "Test Command"));
         }
 
         [TestMethod]
@@ -119,7 +119,7 @@ namespace PP5AutoUITests
             AddCommandBy(GroupName, CommandNumber);
 
             // Check command name the same
-            commandName.ShouldEqualTo(GetCellValue("PGGrid", 0, "Test Command"));
+            commandName.ShouldEqualTo(GetCellValue("PGGrid", 1, "Test Command"));
         }
 
         [TestMethod]
@@ -138,7 +138,7 @@ namespace PP5AutoUITests
             AddCommandBy(GroupName, CommandNumber);
 
             // Check command name the same
-            commandName.ShouldEqualTo(GetCellValue("PGGrid", 0, "Test Command"));
+            commandName.ShouldEqualTo(GetCellValue("PGGrid", 1, "Test Command"));
         }
 
         [TestMethod]
@@ -157,7 +157,7 @@ namespace PP5AutoUITests
             AddCommandBy(GroupName, CommandNumber);
 
             // Check command name the same
-            "GetTDL_Information".ShouldEqualTo(GetCellValue("PGGrid", 0, "Test Command"));
+            "GetTDL_Information".ShouldEqualTo(GetCellValue("PGGrid", 1, "Test Command"));
         }
 
         [TestMethod]
@@ -181,12 +181,12 @@ namespace PP5AutoUITests
         {
             //// Arrange
             // Input Command number that is not in Group: "Arithmetic"
-            int CommandNumber = 26;
+            int CommandNumber = 50;
             string GroupName = "Arithmetic";
 
             //// Act + Assert
             // Add the command, check exception message
-            Exception exp = Assert.ThrowsException<CommandNumberNotExistedException>(() => AddCommandBy(GroupName, CommandNumber));
+            Exception exp = Assert.ThrowsException<CommandNumberOutOfRangeException>(() => AddCommandBy(GroupName, CommandNumber));
             CommandNumber.ToString().ShouldEqualTo(exp.Message);
         }
 
@@ -196,14 +196,14 @@ namespace PP5AutoUITests
         {
             //// Arrange
             // Input Command name that is not in Group: "Arithmetic"
-            string WrongCommandName1 = "XXXXXXXXXX";
-            string WrongCommandName2 = "YYYYYYYYYY";
+            string WrongCommandName1 = "FFFFFFFFFF";
+            string WrongCommandName2 = "GGGGGGGGGG";
             string GroupName = "Arithmetic";
 
             //// Act + Assert
             // Add the commands, check exception message
-            Exception exp = Assert.ThrowsException<CommandNameNotExistedException>(() => AddCommandsBy(GroupName, WrongCommandName1, WrongCommandName2, "MOD"));
-            WrongCommandName1.ShouldEqualTo(exp.Message);
+            CommandNameNotExistedException exp = Assert.ThrowsException<CommandNameNotExistedException>(() => AddCommandsBy(GroupName, WrongCommandName1, WrongCommandName2, "MOD"));
+            WrongCommandName1.ShouldEqualTo(exp.CommandName);
         }
 
         [TestMethod]
@@ -217,10 +217,10 @@ namespace PP5AutoUITests
             //// Act + Assert
             // Add the commands with No: 0, 1, 10
             // Command number: 0 is not in Group: "Arithmetic"
-            Exception exp = Assert.ThrowsException<CommandNumberNotExistedException>(() => AddCommandsBy(GroupName, 0, 1, 10));
+            CommandNumberOutOfRangeException exp = Assert.ThrowsException<CommandNumberOutOfRangeException>(() => AddCommandsBy(GroupName, 0, 1, 10));
 
             // check exception message
-            "0".ShouldEqualTo(exp.Message);
+            0.ShouldEqualTo(exp.CommandNumber);
         }
 
         [TestMethod]
@@ -232,12 +232,12 @@ namespace PP5AutoUITests
             string GroupName = "Arithmetic";
 
             //// Act + Assert
-            // Add the commands with No: 1, 10, 26
-            // Command number: 26 is not in Group: "Arithmetic"
-            Exception exp = Assert.ThrowsException<CommandNumberNotExistedException>(() => AddCommandsBy(GroupName, 1, 10, 26));
+            // Add the commands with No: 1, 10, 50
+            // Command number: 50 is not in Group: "Arithmetic"
+            CommandNumberOutOfRangeException exp = Assert.ThrowsException<CommandNumberOutOfRangeException>(() => AddCommandsBy(GroupName, 1, 10, 50));
 
             // check exception message
-            "26".ShouldEqualTo(exp.Message);
+            50.ShouldEqualTo(exp.CommandNumber);
         }
 
         [TestMethod]
@@ -251,8 +251,8 @@ namespace PP5AutoUITests
 
             //// Act + Assert
             // Add the command, check exception message
-            Exception exp = Assert.ThrowsException<GroupNameNotExistedException>(() => AddCommandBy(GroupName, CommandName));
-            GroupName.ShouldEqualTo(exp.Message);
+            GroupNameNotExistedException exp = Assert.ThrowsException<GroupNameNotExistedException>(() => AddCommandBy(GroupName, CommandName));
+            GroupName.ShouldEqualTo(exp.GroupName);
         }
 
         [TestMethod]
@@ -266,8 +266,8 @@ namespace PP5AutoUITests
 
             //// Act + Assert
             // Add the command, check exception message
-            Exception exp = Assert.ThrowsException<GroupNameNotExistedException>(() => AddCommandBy(GroupName, CommandNumber));
-            GroupName.ShouldEqualTo(exp.Message);
+            GroupNameNotExistedException exp = Assert.ThrowsException<GroupNameNotExistedException>(() => AddCommandBy(GroupName, CommandNumber));
+            GroupName.ShouldEqualTo(exp.GroupName);
         }
 
         [TestMethod]
@@ -279,7 +279,7 @@ namespace PP5AutoUITests
 
             // Command Group
             string GroupName = "AC Source";
-
+            
             // Add the command with command names: "ABS", "MOD", "XOR"
             // { "AC Source",  new[] { "ReadAC_Current", "ReadAC_Frequency" } },
             AddCommandsBy(GroupName, "ReadAC_Current", "ReadAC_Frequency", "SetACDev_CPPHParameter2");

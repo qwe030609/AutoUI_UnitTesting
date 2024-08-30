@@ -9,6 +9,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Appium;
 using System.Windows.Input;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
 namespace PP5AutoUITests
 {
@@ -227,7 +228,7 @@ namespace PP5AutoUITests
                 new Actions(Executor.GetInstance().GetCurrentDriver()).SendKeys(keyStr).Perform();
 
             //string keyDesc = KeysConverter.GetDescription(keyStr);
-            Console.WriteLine($"Keyboard Pressing on: \"{KeysConverter.GetInstance().GetDescription(keyStr)}\"");
+            Logger.LogMessage($"Keyboard Pressing on: \"{KeysConverter.GetInstance().GetDescription(keyStr)}\"");
         }
 
         public static void SelectAll()
